@@ -1,0 +1,2874 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>مجرة فرح | رحلة إنترستيلار</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+  * { user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000; color: #fff;
+    font-family: 'Tajawal', sans-serif;
+    overflow: hidden; height: 100vh; width: 100vw;
+    touch-action: none;
+    overscroll-behavior: none;
+  }
+  #webgl-container { position: absolute; inset: 0; z-index: 0; }
+
+  .glass {
+    background: rgba(10, 15, 30, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+  }
+
+  #planet-info {
+    position: fixed; top: 90px; right: 24px;
+    width: 300px; padding: 16px; z-index: 20;
+    transition: all 0.4s ease;
+  }
+
+  #nav-dock {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%); z-index: 20;
+    display: flex; gap: 8px; padding: 8px;
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: all 0.3s;
+    background: transparent; border: 1px solid transparent;
+    color: #cbd5e1;
+  }
+  .nav-btn:hover:not(.locked) { background: rgba(255,255,255,0.08); }
+  .nav-btn.active {
+    background: rgba(255,255,255,0.15);
+    border-color: currentColor; transform: scale(1.05);
+  }
+  .nav-btn.locked { opacity: 0.4; cursor: not-allowed; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  #top-controls {
+    position: fixed; top: 24px; left: 24px; right: 24px;
+    display: flex; justify-content: space-between;
+    align-items: center; z-index: 20; pointer-events: none;
+  }
+  #top-controls > * { pointer-events: auto; }
+
+  #controls-hint {
+    position: fixed; bottom: 100px; left: 24px;
+    padding: 12px 16px; font-size: 11px;
+    font-family: monospace; color: #94a3b8;
+    z-index: 20; max-width: 240px; line-height: 1.7;
+  }
+  #controls-hint kbd {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px; border-radius: 4px;
+    font-family: monospace; color: #fff; font-size: 10px;
+  }
+
+  #loading {
+    position: fixed; inset: 0; background: #000;
+    z-index: 100; display: flex; align-items: center;
+    justify-content: center; flex-direction: column; gap: 16px;
+    transition: opacity 0.6s;
+  }
+  #loading.hide { opacity: 0; pointer-events: none; }
+  .spin {
+    width: 60px; height: 60px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: #00d2ff; border-radius: 50%;
+    animation: sp 1s linear infinite;
+  }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  .planet-label {
+    position: absolute; transform: translate(-50%, -50%);
+    color: #fff; font-size: 12px; font-family: monospace;
+    background: rgba(0,0,0,0.7);
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    pointer-events: none; white-space: nowrap;
+    transition: opacity 0.3s;
+  }
+
+  #warp-effect {
+    position: fixed; inset: 0; z-index: 15;
+    pointer-events: none; opacity: 0;
+    transition: opacity 0.6s;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,210,255,0.15) 100%);
+  }
+  #warp-effect.show { opacity: 1; }
+
+  #enter-planet-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #00d2ff, #0088ff);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    margin-top: 10px;
+    font-size: 13px;
+    transition: transform 0.2s;
+  }
+  #enter-planet-btn:hover { transform: scale(1.02); }
+
+  #tps-controls {
+    position: fixed; inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    display: none;
+  }
+  #tps-controls.active { display: block; }
+
+  #joystick-zone {
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 45%;
+    height: 55%;
+    pointer-events: auto;
+  }
+  #joystick {
+    position: absolute;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.25);
+    display: none;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  #joystick.active { display: block; }
+  #joystick-knob {
+    position: absolute;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(0, 210, 255, 0.6);
+    border: 2px solid #00d2ff;
+    box-shadow: 0 0 20px rgba(0,210,255,0.5);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  #camera-zone {
+    position: absolute;
+    right: 0; top: 0;
+    width: 55%;
+    height: 70%;
+    pointer-events: auto;
+  }
+
+  #action-buttons {
+    position: absolute;
+    right: 24px; bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    pointer-events: auto;
+  }
+  .tps-btn {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(10, 20, 40, 0.7);
+    border: 2px solid rgba(0, 210, 255, 0.5);
+    color: #00d2ff;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.15s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .tps-btn:active, .tps-btn.pressed {
+    background: rgba(0, 210, 255, 0.4);
+    transform: scale(0.92);
+    box-shadow: 0 0 30px rgba(0,210,255,0.7);
+  }
+  #jump-btn { width: 86px; height: 86px; font-size: 30px; }
+  #interact-btn {
+    display: none;
+    background: rgba(255, 179, 71, 0.3);
+    border-color: #ffb347;
+    color: #ffb347;
+    animation: pulseBtn 1s infinite;
+  }
+  #interact-btn.show { display: flex; }
+  @keyframes pulseBtn {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,179,71,0.5); }
+    50% { box-shadow: 0 0 40px rgba(255,179,71,0.9); }
+  }
+
+  #exit-world-btn {
+    position: fixed;
+    top: 24px; left: 24px;
+    z-index: 40;
+    padding: 10px 18px;
+    background: rgba(10, 20, 40, 0.8);
+    border: 1px solid rgba(255, 100, 100, 0.5);
+    color: #ff6666;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  #exit-world-btn.active { display: flex; }
+
+  #world-hint {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 35;
+    padding: 16px 32px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(0, 210, 255, 0.5);
+    border-radius: 16px;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    max-width: 90vw;
+  }
+  #world-hint.show { opacity: 1; }
+
+  #message-modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 60;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #message-modal.show { display: flex; }
+  #message-modal .content {
+    max-width: 600px;
+    width: 100%;
+    padding: 32px;
+    text-align: center;
+    border: 2px solid rgba(0, 210, 255, 0.5);
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(0,30,60,0.95), rgba(0,0,30,0.95));
+    position: relative;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @media (max-width: 768px) {
+    #planet-info {
+      top: 80px; right: 12px;
+      width: 260px;
+      padding: 12px;
+      font-size: 12px;
+    }
+    #planet-info h2 { font-size: 15px !important; }
+    #nav-dock {
+      padding: 6px; gap: 4px;
+    }
+    .nav-btn {
+      padding: 8px 12px; font-size: 11px;
+    }
+    .nav-btn span { display: none; }
+    .nav-btn.active span { display: inline; }
+    #controls-hint { display: none; }
+    #top-controls { padding: 12px; }
+  }
+
+  @media (orientation: portrait) and (max-width: 768px) {
+    #rotate-hint {
+      display: flex !important;
+    }
+  }
+  #rotate-hint {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 200;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+  }
+  #rotate-hint i {
+    font-size: 60px;
+    color: #00d2ff;
+    margin-bottom: 20px;
+    animation: rotateAnim 2s infinite;
+  }
+  @keyframes rotateAnim {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+  }
+    /* ============================================
+     ⏱️ عداد Live Time (الفضائي)
+     ============================================ */
+  #live-time-panel {
+    position: fixed;
+    top: 90px;
+    right: 24px;
+    z-index: 25;
+    width: 280px;
+    background: linear-gradient(135deg, rgba(5, 15, 30, 0.92), rgba(0, 5, 20, 0.92));
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    color: #00d2ff;
+    box-shadow: 
+      0 0 30px rgba(0, 210, 255, 0.15),
+      inset 0 0 20px rgba(0, 210, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.6s ease;
+    overflow: hidden;
+  }
+  #live-time-panel.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #live-time-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00d2ff, transparent);
+    animation: scanLine 3s linear infinite;
+  }
+  @keyframes scanLine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  #live-time-panel::after {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px;
+    width: 12px; height: 12px;
+    border-top: 1px solid rgba(0,210,255,0.6);
+    border-left: 1px solid rgba(0,210,255,0.6);
+    pointer-events: none;
+  }
+  .lt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0, 210, 255, 0.6);
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 210, 255, 0.15);
+    margin-bottom: 10px;
+  }
+  .lt-header-dot {
+    width: 6px; height: 6px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00ff88;
+    animation: pulseDot 1.5s infinite;
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .lt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  .lt-row .lt-label {
+    color: rgba(0, 210, 255, 0.5);
+    font-size: 10px;
+  }
+  .lt-row .lt-value {
+    color: #00d2ff;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+  }
+  .lt-row.earth .lt-value {
+    color: #ffb347;
+    text-shadow: 0 0 8px rgba(255, 179, 71, 0.5);
+  }
+  .lt-row.miller .lt-value {
+    color: #00ffaa;
+    text-shadow: 0 0 8px rgba(0, 255, 170, 0.5);
+  }
+  .lt-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,210,255,0.2), transparent);
+    margin: 8px 0;
+  }
+  .lt-diff {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background: rgba(0, 210, 255, 0.05);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  .lt-diff .lt-label {
+    font-size: 9px;
+    color: rgba(0, 210, 255, 0.6);
+    letter-spacing: 2px;
+  }
+  .lt-diff .lt-value {
+    font-size: 13px;
+    color: #c77dff;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(199, 125, 255, 0.6);
+  }
+
+  @media (max-width: 768px) {
+    #live-time-panel {
+      top: 70px;
+      right: 12px;
+      width: 240px;
+      padding: 10px 12px;
+    }
+    .lt-row { font-size: 10px; }
+    .lt-diff .lt-value { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="webgl-container"></div>
+<div id="warp-effect"></div>
+
+<div id="rotate-hint">
+  <i class="fa-solid fa-mobile-screen"></i>
+  <h2 style="margin: 0 0 8px 0;">أدر جوالك أفقياً 📱</h2>
+  <p style="color: #94a3b8;">لتجربة أفضل في عالم الكوكب</p>
+</div>
+
+<div id="loading">
+  <div class="spin"></div>
+  <p style="font-family: monospace; font-size: 14px; color: #00d2ff;">جاري تحميل المجرة...</p>
+  <p style="font-family: monospace; font-size: 12px; color: #64748b;" id="load-pct">0%</p>
+</div>
+
+<button id="exit-world-btn" onclick="exitPlanetWorld()">
+  <i class="fa-solid fa-arrow-right"></i> عودة للفضاء
+</button>
+
+<div id="player-pos-display" style="position: fixed; top: 75px; left: 24px; z-index: 50; background: rgba(0, 0, 0, 0.85); color: #00d2ff; padding: 8px 14px; border-radius: 8px; font-family: monospace; font-size: 13px; border: 1px solid rgba(0, 210, 255, 0.4); display: none; pointer-events: none;">
+  📍 Pos: X: 0.00 | Y: 0.00 | Z: 0.00
+</div>
+<!-- ⏱️ عداد Live Time -->
+<div id="live-time-panel">
+  <div class="lt-header">
+    <span>◈ TIME DILATION</span>
+    <div class="lt-header-dot"></div>
+  </div>
+  <div class="lt-row">
+    <span class="lt-label">MISSION TIME</span>
+    <span class="lt-value" id="lt-mission-time">00:00:00</span>
+  </div>
+  <div class="lt-divider"></div>
+  <div class="lt-row earth">
+    <span class="lt-label">🌍 EARTH</span>
+    <span class="lt-value" id="lt-earth-time">--:--:--</span>
+  </div>
+  <div class="lt-row miller">
+    <span class="lt-label">🪐 MILLER</span>
+    <span class="lt-value" id="lt-miller-time">--:--:--</span>
+  </div>
+  <div class="lt-diff">
+    <span class="lt-label">Δ DIFFERENCE</span>
+    <span class="lt-value" id="lt-difference">+0s</span>
+  </div>
+</div>
+<div id="top-controls">
+  <div class="glass" style="padding: 12px 16px; display: flex; align-items: center; gap: 12px;">
+    <i class="fa-solid fa-atom" style="font-size: 20px; color: #00d2ff;" id="main-icon"></i>
+    <div>
+      <div style="font-weight: 900; font-size: 16px;">مجرة فرح</div>
+      <div style="font-size: 10px; color: #94a3b8; font-family: monospace;">INTERSTELLAR SPACE</div>
+    </div>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <button id="mute-btn" onclick="toggleMute()" class="glass" style="padding: 10px 14px; color: #00d2ff; cursor: pointer; border: 1px solid rgba(255,255,255,0.12);">
+      <i class="fa-solid fa-volume-high" id="mute-icon"></i>
+    </button>
+    <button onclick="resetView()" class="glass" style="padding: 10px 14px; color: #00d2ff; cursor: pointer; border: 1px solid rgba(255,255,255,0.12);">
+      <i class="fa-solid fa-house"></i> <span id="reset-text">عرض المجرة</span>
+    </button>
+  </div>
+</div>
+
+<div id="planet-info" class="glass">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 12px;">
+    <div style="font-size: 11px; color: #94a3b8; font-family: monospace;">CURRENT PLANET</div>
+    <span id="info-status" style="font-size: 10px; padding: 2px 8px; border-radius: 4px;">🔒 مقفل</span>
+  </div>
+  <h2 id="info-name" style="font-weight: 900; font-size: 18px; margin: 0 0 8px 0;">—</h2>
+  <p id="info-desc" style="font-size: 12px; color: #cbd5e1; line-height: 1.6; margin: 0 0 12px 0;">—</p>
+
+  <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; font-family: monospace; margin-bottom: 4px;">
+      <span>الوقت النسبي:</span>
+      <span id="info-dilation" style="color: #fbbf24;">—</span>
+    </div>
+    <div id="info-planet-time" style="font-family: monospace; font-size: 13px; color: #22d3ee; font-weight: bold;">00d : 00h : 00m : 00s</div>
+  </div>
+
+  <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+    <div id="mission-box" style="font-size: 12px;"></div>
+  </div>
+</div>
+
+<div id="controls-hint" class="glass">
+  <div style="margin-bottom: 6px; color: #fff; font-weight: bold;">🎮 التحكم:</div>
+  <div>🖱️ <kbd>سحب</kbd> لتدوير الكاميرا</div>
+  <div>⌨️ <kbd>W A S D</kbd> للتنقل</div>
+  <div>🚀 اضغط كوكب → سافر له</div>
+</div>
+
+<nav id="nav-dock" class="glass">
+  <button onclick="focusPlanet(0)" id="nav-0" class="nav-btn active" style="color: #00d2ff;">
+    <div class="dot" style="background: #00d2ff;"></div><span>ميلر</span>
+  </button>
+  <button onclick="focusPlanet(1)" id="nav-1" class="nav-btn locked" style="color: #00f2fe;">
+    <div class="dot" style="background: #00f2fe;"></div><span>مان</span>
+    <i class="fa-solid fa-lock" style="font-size: 9px;"></i>
+  </button>
+  <button onclick="focusPlanet(2)" id="nav-2" class="nav-btn locked" style="color: #ffb347;">
+    <div class="dot" style="background: #ffb347;"></div><span>ادموندز</span>
+    <i class="fa-solid fa-lock" style="font-size: 9px;"></i>
+  </button>
+  <button onclick="focusPlanet(3)" id="nav-3" class="nav-btn locked" style="color: #9d4edd;">
+    <div class="dot" style="background: #9d4edd;"></div><span>جارجانتوا</span>
+    <i class="fa-solid fa-lock" style="font-size: 9px;"></i>
+  </button>
+</nav>
+
+<div id="tps-controls">
+  <div id="joystick-zone">
+    <div id="joystick">
+      <div id="joystick-knob"></div>
+    </div>
+  </div>
+  <div id="camera-zone"></div>
+  <div id="action-buttons">
+    <button id="interact-btn" class="tps-btn" onclick="handleInteract()">
+      <i class="fa-solid fa-hand"></i>
+    </button>
+    <button id="jump-btn" class="tps-btn">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+    <button id="run-btn" class="tps-btn">
+      <i class="fa-solid fa-bolt"></i>
+    </button>
+  </div>
+</div>
+
+<div id="world-hint"></div>
+
+<div id="message-modal">
+  <div class="content">
+    <div style="font-size: 60px; margin-bottom: 16px;">📜</div>
+    <h2 id="message-title" style="font-family: 'Amiri', serif; font-size: 32px; margin: 0 0 20px 0; color: #00d2ff;">رسالة سرية</h2>
+    <p id="message-text" style="font-size: 16px; line-height: 1.9; color: #cbd5e1; margin-bottom: 28px;"></p>
+    <button onclick="closeMessageModal()" style="padding: 14px 40px; border-radius: 50px; background: linear-gradient(90deg, #00d2ff, #0088ff); color: #000; font-weight: bold; font-size: 16px; border: none; cursor: pointer;">
+      تم ✨
+    </button>
+  </div>
+</div>
+
+<!-- ============ Skin Modals ============ -->
+<!-- Modal قفل صندوق الرسالة بالرمز -->
+<div id="message-lock-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 75; align-items: center; justify-content: center; padding: 20px;">
+  <div class="glass" style="max-width: 450px; width: 100%; padding: 32px; text-align: center; border-color: rgba(0,210,255,0.5);">
+    <div style="font-size: 50px; margin-bottom: 12px;">🔒</div>
+    <h2 style="font-family: 'Amiri', serif; font-size: 26px; margin: 0 0 10px 0; color: #00d2ff;">الرسالة مقفلة</h2>
+    <p style="color: #cbd5e1; font-size: 13px; line-height: 1.7; margin-bottom: 20px;">
+      هذه الرسالة لا يمكن فتحها إلا برمز سري تحصل عليه من الميني جيم الخاص بالسكن!
+    </p>
+    <input id="message-secret-input" type="text" placeholder="أدخل الرمز (مثال: FARAH-5D)" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,210,255,0.5); border-radius: 10px; color: #fff; text-align: center; font-size: 14px; margin-bottom: 16px; outline: none; font-family: monospace; letter-spacing: 2px;">
+    <div style="display: flex; gap: 10px;">
+      <button onclick="closeMessageLockModal()" style="flex: 1; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-weight: bold;">
+        إلغاء
+      </button>
+      <button onclick="verifyMessageCode()" style="flex: 1; padding: 12px; border-radius: 10px; background: linear-gradient(90deg, #00d2ff, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold;">
+        فتح 🔓
+      </button>
+    </div>
+  </div>
+</div>
+<!-- قائمة المهمة -->
+<div id="skin-menu-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 70; align-items: center; justify-content: center; padding: 20px;">
+  <div style="max-width: 500px; width: 100%; padding: 32px; text-align: center; border: 2px solid rgba(0,255,170,0.5); border-radius: 24px; background: linear-gradient(135deg, rgba(0,30,20,0.95), rgba(0,0,30,0.95));">
+    <div style="font-size: 60px; margin-bottom: 16px;">🎁</div>
+    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 16px 0; color: #00ffaa;">مهمة سرية</h2>
+    <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 24px;">
+      أكمل الميني جيم لتحصل على رمز سري!
+    </p>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button onclick="closeSkinMenu()" style="padding: 12px 28px; border-radius: 50px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-weight: bold;">
+        إغلاق
+      </button>
+      <button onclick="startSkinMission()" style="padding: 12px 28px; border-radius: 50px; background: linear-gradient(90deg, #00ffaa, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold;">
+        🎮 ابدأ المهمة
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- الميني جيم -->
+<div id="skin-minigame-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 71; align-items: center; justify-content: center; padding: 20px;">
+  <div style="max-width: 600px; width: 100%; padding: 32px; text-align: center; border: 2px solid rgba(0,255,170,0.5); border-radius: 24px; background: rgba(0,10,5,0.95);">
+    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 8px 0; color: #00ffaa;">🎮 الميني جيم</h2>
+    <p id="minigame-status" style="color: #cbd5e1; margin-bottom: 16px;">انقري على المربعات المضيئة!</p>
+    <div id="minigame-score" style="font-family: monospace; font-size: 20px; font-weight: bold; color: #00ffaa; margin-bottom: 16px;">0 / 5</div>
+    <div id="minigame-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-content: center; max-width: 220px; margin: 0 auto;"></div>
+  </div>
+</div>
+
+<!-- عرض الرمز -->
+<div id="skin-reward-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 72; align-items: center; justify-content: center; padding: 20px;">
+  <div style="max-width: 500px; width: 100%; padding: 32px; text-align: center; border: 2px solid rgba(0,255,170,0.5); border-radius: 24px; background: linear-gradient(135deg, rgba(0,30,20,0.95), rgba(0,0,30,0.95));">
+    <div style="font-size: 60px; margin-bottom: 16px;">🏆</div>
+    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 16px 0; color: #00ffaa;">حصلتِ على الرمز السري!</h2>
+    <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 20px;">
+      احفظي هذا الرمز — راح تحتاجينه لاحقاً:
+    </p>
+    <div id="skin-code-display" style="font-family: monospace; font-size: 32px; font-weight: bold; color: #00ffaa; padding: 20px; background: rgba(0,0,0,0.5); border: 2px dashed rgba(0,255,170,0.5); border-radius: 12px; margin-bottom: 24px; letter-spacing: 2px;">
+      FARAH-5D
+    </div>
+    <button onclick="closeRewardModal()" style="padding: 14px 40px; border-radius: 50px; background: linear-gradient(90deg, #00ffaa, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold; font-size: 16px;">
+      تم ✨
+    </button>
+  </div>
+</div>
+
+<!-- Tesseract Modal -->
+<div id="tesseract" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 50; align-items: center; justify-content: center; padding: 20px;">
+  <div class="glass" style="max-width: 600px; width: 100%; padding: 32px; text-align: center; border-color: rgba(157,78,221,0.5);">
+    <i class="fa-solid fa-cube" style="font-size: 48px; color: #c77dff; margin-bottom: 16px;"></i>
+    <div style="font-family: monospace; color: #c77dff; font-size: 11px; letter-spacing: 2px;">DIMENSION 5 // TESSERACT</div>
+    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 8px 0 16px 0;">غرفة الأبعاد الخمسة</h2>
+    <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 20px;">
+      يا فرح.. حبكِ هو القوة الوحيدة القادرة على اختراق المكان والزمان. ✨
+    </p>
+    <button onclick="document.getElementById('tesseract').style.display='none'" style="padding: 12px 32px; border-radius: 999px; background: linear-gradient(90deg, #9d4edd, #ec4899); color: #fff; font-weight: bold; cursor: pointer; border: none;">
+      إغلاق
+    </button>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+
+// ==========================================
+// 1. إعدادات الكواكب
+// ==========================================
+const PLANETS = [
+  { id: 'miller', name: 'كوكب ميلر', color: 0x00d2ff, colorHex: '#00d2ff',
+    url: 'models/miller.glb',
+    pos: { x: -80, y: -20, z: -60 },
+    dilation: 7*365*24, dilationText: '1س = 7 سنوات',
+    desc: 'كوكب المحيط. أمواج عملاقة بفعل جاذبية الثقب الأسود.',
+    unlocked: true, completed: false, mission: 'wave',
+    hasWorld: true },
+
+  { id: 'mann', name: 'كوكب مان', color: 0x00f2fe, colorHex: '#00f2fe',
+    url: 'models/mann.glb',
+    pos: { x: -120, y: 30, z: 80 },
+    dilation: 1.5, dilationText: '1س = 1.5س',
+    desc: 'كوكب الجليد المتجمد.',
+    unlocked: false, completed: false, mission: 'code',
+    hasWorld: false },
+
+  { id: 'edmunds', name: 'كوكب ادموندز', color: 0xffb347, colorHex: '#ffb347',
+    url: 'models/edmunds.glb',
+    pos: { x: 100, y: 40, z: -30 },
+    dilation: 1.0, dilationText: '1س = 1س',
+    desc: 'الملاذ الأخير.',
+    unlocked: false, completed: false, mission: 'stars',
+    hasWorld: false },
+
+  { id: 'gargantua', name: 'جارجانتوا', color: 0x9d4edd, colorHex: '#9d4edd',
+    url: 'models/gargantua.glb',
+    pos: { x: 150, y: -20, z: 60 },
+    dilation: 100*365*24, dilationText: 'اللانهاية',
+    desc: 'الثقب الأسود الفائق.',
+    unlocked: false, completed: false, mission: 'tesseract',
+    hasWorld: false }
+];
+
+const SHIP_CONFIG = {
+  modelUrl: 'models/ship.glb',
+  scale: 1,
+  startAtPlanetIdx: 0
+};
+
+// ==========================================
+// 2. إعدادات الشخصية والعالم والسكن
+// ==========================================
+const CHARACTER_CONFIG = {
+  modelUrl: 'models/character.fbx',
+  files: {
+    idle: 'models/character-idle.fbx',
+    walk: 'models/character-walk.fbx',
+    run:  'models/character-run.fbx',
+    jump: 'models/character-jump.fbx'
+  },
+  height: 1.0
+};
+
+const WORLD_CONFIG = {
+  mapUrl: 'models/world.glb',
+  targetSize: 300,
+  position: { x: 0, y: 0, z: 0 },
+  rotation: { x: 0, y: 0, z: 0 }
+};
+
+// ⭐ إعدادات السكن — عند الإحداثي اللي في الصورة
+const SKIN_CONFIG = {
+  url: 'models/skin.glb',                    // ← ملف السكن
+  scale: 1,
+  // ⭐ الإحداثي اللي شفته في الصورة
+  position: { x: -68.79, y: -15.07, z: -91.93 },
+  rotation: { x: 0, y: 0, z: 0 },
+
+  // مسافة التفاعل (متى يظهر زر 🤚)
+  interactDistance: 8,
+
+  // الرمز اللي يعطيه الميني جيم
+  rewardCode: 'FARAH-5D',
+
+  // حالة
+  completed: false,
+  object: null
+};
+// البوت الثاني (فيديو) 🚗
+const VIDEO_OBJECT_CONFIG = {
+  url: 'models/video-object.glb',
+  scale: 0.007,
+  position: { x: -74.03, y: -11.74, z: -54.84 },
+  rotation: { x: 0, y: 0, z: 0 },
+  interactDistance: 6,
+  videoUrl: 'videos/message.mp4',
+  object: null,
+  viewed: false
+};
+const MILLER_MESSAGE = {
+  position: { x: 14.34, y: -18.46, z: -21.24 },
+  title: 'رسالة من قلب المحيط',
+  text: 'يا فرح.. كما أن أمواج هذا الكوكب لا تتوقف، كذلك حبي لكِ لا يعرف التوقف. كل موجة تحمل اسمك، وكل قطرة ماء تهمس باسمك. أنتِ ملاذي في هذا الكون الواسع. 💙'
+};
+// ==========================================
+// 🎵 إعدادات الصوت
+// ==========================================
+const AUDIO_CONFIG = {
+  // صوت الخلفية
+  ambient: {
+    url: 'audio/ambient.mp3',
+    volume: 0.3,          // خفيف (0-1)
+    loop: true,
+    audio: null,          // HTMLAudioElement
+    enabled: false
+  },
+  
+  // صوت المشي
+  footstep: {
+    url: 'audio/footstep.mp3',
+    volume: 0.1,          // متوسط
+    audio: null,
+    enabled: true,
+    // كل كم ثانية يلعب صوت خطوة
+    walkInterval: 0.5,    // مشي: كل 0.5 ثانية
+    runInterval: 0.3      // جري: كل 0.3 ثانية
+  },
+  
+  // حالة الصوت العام
+  muted: false,
+  lastFootstepTime: 0
+};
+// ==========================================
+// 3. حالة عامة
+// ==========================================
+let scene, camera, renderer, controls;
+let spaceScene, planetScene;
+let currentMode = 'space';
+let currentPlanetWorld = null;
+
+let clock = new THREE.Clock();
+let gltfLoader = new GLTFLoader();
+let fbxLoader = new FBXLoader();
+let modelCache = {};
+
+const planetGroups = {};
+const labels = {};
+let shipGroup = null;
+let shipProgress = 0;
+let shipTraveling = false;
+let shipStartPos = new THREE.Vector3();
+let shipEndPos = new THREE.Vector3();
+let shipTargetIdx = 0;
+let currentIdx = 0;
+let earthStart = new Date();
+
+let playerGroup = null;
+let playerMixer = null;
+let playerAction = null;
+let playerAnimationClips = {};
+let playerOnGround = true;
+let playerVelocityY = 0;
+const PLAYER_SPEED = 10;
+const PLAYER_RUN_SPEED = 6;
+const PLAYER_JUMP = 8;
+const GRAVITY = 20;
+
+let worldMapObject = null;
+let worldMaxY = 100;
+const raycaster = new THREE.Raycaster();
+const downVector = new THREE.Vector3(0, -1, 0);
+
+let cameraYaw = 0;
+let cameraPitch = 0.3;
+const CAMERA_DISTANCE = 1.7;
+const CAMERA_HEIGHT = .7;
+
+let joystickActive = false;
+let joystickCenter = { x: 0, y: 0 };
+let joystickValue = { x: 0, y: 0 };
+let isRunning = false;
+let isJumpBtnPressed = false;
+// ⏱️ عداد Live Time
+let missionStartTime = 0;
+let liveTimeInterval = null;
+const TIME_DILATION_FACTOR = 7 * 365 * 24;   // 61320
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                 (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+
+const keys = { w:false, a:false, s:false, d:false, space:false, shift:false };
+
+// ==========================================
+// 4. INIT
+// ==========================================
+function init() {
+  spaceScene = new THREE.Scene();
+  spaceScene.background = new THREE.Color(0x000308);
+  spaceScene.fog = new THREE.FogExp2(0x000308, 0.0015);
+
+  scene = spaceScene;
+
+  camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 5000);
+  camera.position.set(-80, 0, 80);
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.getElementById('webgl-container').appendChild(renderer.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.maxDistance = 500;
+  controls.minDistance = 5;
+  controls.target.set(PLANETS[0].pos.x, PLANETS[0].pos.y, PLANETS[0].pos.z);
+
+  spaceScene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dir = new THREE.DirectionalLight(0xffffff, 1.6);
+  dir.position.set(80, 120, 80);
+  spaceScene.add(dir);
+  const dir2 = new THREE.DirectionalLight(0x9d4edd, 0.4);
+  dir2.position.set(-100, -80, -100);
+  spaceScene.add(dir2);
+
+  PLANETS.forEach(p => {
+    const pl = new THREE.PointLight(p.color, 1.5, 60);
+    pl.position.set(p.pos.x, p.pos.y, p.pos.z);
+    spaceScene.add(pl);
+  });
+
+  createStars();
+  createPlanets();
+  createShip();
+
+  setupMobileControls();
+ initAudio();
+  addEventListener('resize', onResize);
+  addEventListener('keydown', e => onKey(e, true));
+  addEventListener('keyup', e => onKey(e, false));
+
+  addEventListener('blur', resetMovementInputs);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) resetMovementInputs();
+  });
+
+  animate();
+  updateUI();
+}
+
+function resetMovementInputs() {
+  keys.w = keys.a = keys.s = keys.d = keys.space = keys.shift = false;
+  joystickActive = false;
+  joystickValue.x = 0;
+  joystickValue.y = 0;
+  isRunning = false;
+  isJumpBtnPressed = false;
+}
+
+function createStars() {
+  const geo = new THREE.BufferGeometry();
+  const n = 10000;
+  const pos = new Float32Array(n * 3);
+  for (let i = 0; i < n * 3; i++) pos[i] = (Math.random() - 0.5) * 2000;
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, transparent: true, opacity: 0.9 });
+  spaceScene.add(new THREE.Points(geo, mat));
+}
+
+function createPlanets() {
+  PLANETS.forEach((p, i) => {
+    const group = new THREE.Group();
+    group.position.set(p.pos.x, p.pos.y, p.pos.z);
+    group.userData = { planetId: p.id, idx: i };
+    spaceScene.add(group);
+    planetGroups[p.id] = group;
+
+    const ringGeo = new THREE.RingGeometry(6, 6.8, 64);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: p.color, side: THREE.DoubleSide, transparent: true,
+      opacity: p.unlocked ? 0.35 : 0.08
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = -Math.PI / 2;
+    group.add(ring);
+    group.userData.ring = ring;
+
+    loadGLB(p, group);
+    createLabel(p);
+  });
+}
+
+function loadGLB(planet, group) {
+  if (modelCache[planet.url]) {
+    placeModel(modelCache[planet.url], planet, group);
+    return;
+  }
+  gltfLoader.load(
+    planet.url,
+    gltf => {
+      modelCache[planet.url] = gltf.scene;
+      placeModel(gltf.scene, planet, group);
+      onLoadProgress();
+    },
+    xhr => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        const el = document.getElementById('load-pct');
+        if (el) el.innerText = pct + '%';
+      }
+    },
+    () => { fallback(planet, group); onLoadProgress(); }
+  );
+}
+
+function placeModel(model, planet, group) {
+  const clone = model.clone(true);
+  const box = new THREE.Box3().setFromObject(clone);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  clone.position.sub(center);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const sf = 10 / maxDim;
+
+  const wrapper = new THREE.Group();
+  wrapper.add(clone);
+  wrapper.scale.setScalar(sf);
+
+  wrapper.traverse(c => {
+    if (c.isMesh && c.material && c.material.color) {
+      c.material.userData = c.material.userData || {};
+      c.material.userData.originalColor = c.material.color.getHex();
+    }
+  });
+
+  if (!planet.unlocked) {
+    wrapper.traverse(c => {
+      if (c.isMesh && c.material) {
+        c.material = c.material.clone();
+        if (c.material.color) c.material.color.setHex(0x2a2a3a);
+        if (c.material.emissive) c.material.emissive.setHex(0x000000);
+        c.material.transparent = true;
+        c.material.opacity = 0.5;
+      }
+    });
+  }
+
+  group.add(wrapper);
+  group.userData.model = wrapper;
+}
+
+function fallback(planet, group) {
+  const geo = new THREE.SphereGeometry(5, 32, 32);
+  const mat = new THREE.MeshStandardMaterial({
+    color: planet.unlocked ? planet.color : 0x2a2a3a,
+    roughness: 0.6, metalness: 0.3,
+    transparent: !planet.unlocked, opacity: planet.unlocked ? 1 : 0.5
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  group.add(mesh);
+  group.userData.model = mesh;
+  mat.userData = { originalColor: planet.unlocked ? planet.color : 0x2a2a3a };
+}
+
+function createLabel(planet) {
+  const el = document.createElement('div');
+  el.className = 'planet-label';
+  el.innerHTML = `<span style="color: ${planet.colorHex};">●</span> ${planet.name}${!planet.unlocked ? ' 🔒' : ''}`;
+  document.body.appendChild(el);
+  labels[planet.id] = el;
+}
+
+// ==========================================
+// 5. الطيّارة
+// ==========================================
+function createShip() {
+  shipGroup = new THREE.Group();
+  const startP = PLANETS[SHIP_CONFIG.startAtPlanetIdx].pos;
+  shipGroup.position.set(startP.x, startP.y + 12, startP.z + 12);
+
+  gltfLoader.load(
+    SHIP_CONFIG.modelUrl,
+    gltf => {
+      const ship = gltf.scene;
+      const box = new THREE.Box3().setFromObject(ship);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      ship.position.sub(center);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      ship.scale.setScalar((4 / maxDim) * SHIP_CONFIG.scale);
+      ship.rotation.y = Math.PI;
+      shipGroup.add(ship);
+    },
+    undefined,
+    () => {
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0xffffff, metalness: 0.9, roughness: 0.2,
+        emissive: 0x00d2ff, emissiveIntensity: 0.4
+      });
+      const body = new THREE.Mesh(new THREE.ConeGeometry(1, 3.5, 8), mat);
+      body.rotation.x = -Math.PI / 2;
+      shipGroup.add(body);
+
+      const wingMat = new THREE.MeshStandardMaterial({
+        color: 0x00d2ff, metalness: 0.7, roughness: 0.3,
+        emissive: 0x00d2ff, emissiveIntensity: 1
+      });
+      const wing = new THREE.Mesh(new THREE.BoxGeometry(3, 0.2, 1.2), wingMat);
+      wing.position.z = -0.3;
+      shipGroup.add(wing);
+
+      const tailMat = new THREE.MeshBasicMaterial({ color: 0xff6600 });
+      const tail = new THREE.Mesh(new THREE.ConeGeometry(0.4, 1.5, 8), tailMat);
+      tail.rotation.x = Math.PI / 2;
+      tail.position.z = 2;
+      shipGroup.add(tail);
+      shipGroup.userData.tail = tail;
+    }
+  );
+
+  const light = new THREE.PointLight(0x00d2ff, 2, 40);
+  shipGroup.add(light);
+  spaceScene.add(shipGroup);
+}
+
+// ==========================================
+// 6. تحديث الطيّارة
+// ==========================================
+function updateShip(dt) {
+  if (!shipGroup) return;
+
+  if (shipGroup.userData.tail) {
+    shipGroup.userData.tail.scale.z = 1 + Math.sin(performance.now() * 0.02) * 0.3;
+  }
+
+  if (shipTraveling) {
+    shipProgress += dt * 0.35;
+    if (shipProgress >= 1) {
+      shipProgress = 1;
+      shipTraveling = false;
+      onShipArrived();
+    }
+
+    const t = shipProgress;
+    const mid = new THREE.Vector3().addVectors(shipStartPos, shipEndPos).multiplyScalar(0.5);
+    mid.y += 30;
+
+    const p = new THREE.Vector3();
+    const mt = 1 - t;
+    p.x = mt*mt*shipStartPos.x + 2*mt*t*mid.x + t*t*shipEndPos.x;
+    p.y = mt*mt*shipStartPos.y + 2*mt*t*mid.y + t*t*shipEndPos.y;
+    p.z = mt*mt*shipStartPos.z + 2*mt*t*mid.z + t*t*shipEndPos.z;
+
+    const prevPos = shipGroup.position.clone();
+    shipGroup.position.copy(p);
+
+    const direction = new THREE.Vector3().subVectors(p, prevPos);
+    if (direction.length() > 0.01) {
+      const targetYaw = Math.atan2(direction.x, direction.z);
+      const targetPitch = -Math.asin(direction.clone().normalize().y);
+      shipGroup.rotation.y = THREE.MathUtils.lerp(shipGroup.rotation.y, targetYaw, 0.15);
+      shipGroup.rotation.x = THREE.MathUtils.lerp(shipGroup.rotation.x, targetPitch, 0.15);
+    }
+
+    const cockpitOffset = new THREE.Vector3(0, 0.6, -1.8);
+    cockpitOffset.applyQuaternion(shipGroup.quaternion);
+    const cockpitPos = shipGroup.position.clone().add(cockpitOffset);
+    camera.position.lerp(cockpitPos, 0.4);
+
+    const lookAhead = new THREE.Vector3(0, 0, 8);
+    lookAhead.applyQuaternion(shipGroup.quaternion);
+    const lookTarget = shipGroup.position.clone().add(lookAhead);
+    controls.target.lerp(lookTarget, 0.4);
+
+    const shake = Math.sin(performance.now() * 0.05) * 0.08;
+    camera.position.x += shake;
+    camera.position.y += shake * 0.5;
+
+    const warp = document.getElementById('warp-effect');
+    if (t > 0.1 && t < 0.9) warp.classList.add('show');
+    else warp.classList.remove('show');
+  }
+  else if (shipGroup.userData.hoverMode) {
+    const time = performance.now() * 0.0004;
+    const center = shipGroup.userData.hoverCenter;
+    const radius = 20;
+    shipGroup.position.x = center.x + Math.cos(time) * radius;
+    shipGroup.position.z = center.z + Math.sin(time) * radius;
+    shipGroup.position.y = center.y + 10 + Math.sin(time * 2) * 2;
+    const nextX = center.x + Math.cos(time + 0.05) * radius;
+    const nextZ = center.z + Math.sin(time + 0.05) * radius;
+    shipGroup.rotation.y = Math.atan2(nextX - shipGroup.position.x, nextZ - shipGroup.position.z);
+    shipGroup.rotation.x = 0;
+  }
+}
+
+function onShipArrived() {
+  document.getElementById('warp-effect').classList.remove('show');
+
+  const p = PLANETS[shipTargetIdx];
+  const targetPos = new THREE.Vector3(p.pos.x, p.pos.y, p.pos.z);
+
+  shipGroup.userData.hoverMode = true;
+  shipGroup.userData.hoverCenter = targetPos;
+
+  setTimeout(() => {
+    const camPos = targetPos.clone().add(new THREE.Vector3(0, 15, 45));
+    animateCameraTo(camPos, targetPos, 1500);
+  }, 700);
+}
+
+// ==========================================
+// 7. تحريك الكاميرا
+// ==========================================
+function animateCameraTo(to, lookAt, duration) {
+  const startPos = camera.position.clone();
+  const startLook = controls.target.clone();
+  const t0 = performance.now();
+
+  function step() {
+    if (shipTraveling) return;
+    const t = Math.min((performance.now() - t0) / duration, 1);
+    const eased = t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
+    camera.position.lerpVectors(startPos, to, eased);
+    controls.target.lerpVectors(startLook, lookAt, eased);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  step();
+}
+
+// ==========================================
+// 8. التسميات
+// ==========================================
+function updateLabels() {
+  if (currentMode !== 'space') return;
+  PLANETS.forEach(p => {
+    const el = labels[p.id];
+    if (!el) return;
+    const worldPos = new THREE.Vector3(p.pos.x, p.pos.y + 12, p.pos.z);
+    const screenPos = worldPos.clone().project(camera);
+
+    if (screenPos.z > 1 || screenPos.x < -1.2 || screenPos.x > 1.2 || screenPos.y < -1.2 || screenPos.y > 1.2) {
+      el.style.opacity = 0;
+      return;
+    }
+    const x = (screenPos.x * 0.5 + 0.5) * innerWidth;
+    const y = (-screenPos.y * 0.5 + 0.5) * innerHeight;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+
+    const dist = camera.position.distanceTo(new THREE.Vector3(p.pos.x, p.pos.y, p.pos.z));
+    el.style.opacity = dist > 400 ? 0 : Math.max(0.2, 1 - dist / 450);
+  });
+}
+
+function onKey(e, down) {
+  const k = e.key.toLowerCase();
+  if (k === 'w' || k === 'arrowup') keys.w = down;
+  if (k === 'a' || k === 'arrowleft') keys.a = down;
+  if (k === 's' || k === 'arrowdown') keys.s = down;
+  if (k === 'd' || k === 'arrowright') keys.d = down;
+  if (k === ' ') keys.space = down;
+  if (k === 'shift') keys.shift = down;
+
+  if (currentMode === 'planet' && k === 'e' && down) {
+    handleInteract();
+  }
+}
+
+// ==========================================
+// 9. السفر للكوكب
+// ==========================================
+window.focusPlanet = function (idx) {
+  const p = PLANETS[idx];
+  if (!p.unlocked) {
+    alert('🔒 هذا الكوكب مقفل. أكمل مهمة الكوكب السابق أولاً.');
+    return;
+  }
+  if (shipTraveling || currentMode === 'planet') return;
+
+  currentIdx = idx;
+  shipTargetIdx = idx;
+
+  shipStartPos.copy(shipGroup.position);
+  shipGroup.userData.hoverMode = false;
+
+  shipEndPos.set(p.pos.x, p.pos.y + 6, p.pos.z + 18);
+
+  shipProgress = 0;
+  shipTraveling = true;
+
+  const dirToTarget = new THREE.Vector3().subVectors(shipEndPos, shipStartPos).normalize();
+  shipGroup.rotation.y = Math.atan2(dirToTarget.x, dirToTarget.z);
+  shipGroup.rotation.x = -Math.asin(dirToTarget.y);
+
+  const cockpitOffset = new THREE.Vector3(0, 0.6, -1.8);
+  cockpitOffset.applyQuaternion(shipGroup.quaternion);
+  const cockpitPos = shipGroup.position.clone().add(cockpitOffset);
+
+  const lookAhead = new THREE.Vector3(0, 0, 8);
+  lookAhead.applyQuaternion(shipGroup.quaternion);
+  const lookTarget = shipGroup.position.clone().add(lookAhead);
+
+  animateCameraTo(cockpitPos, lookTarget, 500);
+  updateUI();
+};
+
+window.resetView = function () {
+  if (currentMode === 'planet') return;
+  const overview = new THREE.Vector3(0, 100, 250);
+  const target = new THREE.Vector3(20, 0, 0);
+  animateCameraTo(overview, target, 1500);
+};
+window.closeMessageLockModal = function () {
+  document.getElementById('message-lock-modal').style.display = 'none';
+  document.getElementById('message-secret-input').value = '';
+};
+
+window.verifyMessageCode = function () {
+  const inputVal = document.getElementById('message-secret-input').value.trim().toUpperCase();
+  const correctCode = SKIN_CONFIG.rewardCode; // 'FARAH-5D'
+
+  if (inputVal === correctCode) {
+    closeMessageLockModal();
+    
+    // فتح الرسالة الأصلية بعد صحة الرمز
+    document.getElementById('message-title').textContent = MILLER_MESSAGE.title;
+    document.getElementById('message-text').textContent = MILLER_MESSAGE.text;
+    document.getElementById('message-modal').classList.add('show');
+    
+    // إتمام المهمة بنجاح
+    completeMission();
+  } else {
+    alert('❌ الرمز غير صحيح! أكمل ميني جيم السكن أولاً للحصول على الرمز الصحيح (FARAH-5D).');
+  }
+};
+// ==========================================
+// 10. UI
+// ==========================================
+function updateUI() {
+  const p = PLANETS[currentIdx];
+  document.getElementById('info-name').textContent = p.name;
+  document.getElementById('info-desc').textContent = p.desc;
+  document.getElementById('info-dilation').textContent = p.dilationText;
+
+  const statusEl = document.getElementById('info-status');
+  if (p.unlocked && p.completed) {
+    statusEl.textContent = '✅ مكتمل';
+    statusEl.style.background = 'rgba(34,197,94,0.15)';
+    statusEl.style.color = '#4ade80';
+  } else if (p.unlocked) {
+    statusEl.textContent = '🔓 مفتوح';
+    statusEl.style.background = 'rgba(59,130,246,0.15)';
+    statusEl.style.color = '#60a5fa';
+  } else {
+    statusEl.textContent = '🔒 مقفل';
+    statusEl.style.background = 'rgba(239,68,68,0.15)';
+    statusEl.style.color = '#f87171';
+  }
+
+  const mb = document.getElementById('mission-box');
+  if (p.completed) {
+    mb.innerHTML = '<div style="text-align: center; color: #4ade80; font-weight: bold;">✅ تم اجتياز المهمة</div>';
+  } else if (p.unlocked && p.hasWorld) {
+    mb.innerHTML = '<button id="enter-planet-btn" onclick="enterPlanetWorld()">🚀 دخول الكوكب</button>';
+  } else if (p.unlocked) {
+    mb.innerHTML = '<button onclick="startMission()" style="width: 100%; padding: 8px; border-radius: 8px; background: ' + p.colorHex + '; color: #000; font-weight: bold; cursor: pointer; border: none;">ابدأ المهمة</button>';
+  } else {
+    mb.innerHTML = '<div style="text-align: center; color: #64748b; font-size: 11px;">🔒 أكمل المهمة السابقة</div>';
+  }
+
+  PLANETS.forEach((pl, i) => {
+    const btn = document.getElementById('nav-' + i);
+    btn.classList.toggle('active', i === currentIdx);
+    btn.classList.toggle('locked', !pl.unlocked);
+    const icon = btn.querySelector('.fa-lock');
+    if (pl.unlocked && icon) icon.remove();
+    if (!pl.unlocked && !icon) {
+      btn.insertAdjacentHTML('beforeend', '<i class="fa-solid fa-lock" style="font-size: 9px;"></i>');
+    }
+  });
+
+  document.getElementById('main-icon').style.color = p.colorHex;
+}
+
+setInterval(() => {
+  if (currentMode !== 'space') return;
+  const p = PLANETS[currentIdx];
+  const now = new Date();
+  const earthSec = Math.floor((now - earthStart) / 1000);
+  const planetSec = earthSec / (p.dilation || 1);
+  const pd = Math.floor(planetSec / 86400);
+  const ph = Math.floor((planetSec % 86400) / 3600);
+  const pm = Math.floor((planetSec % 3600) / 60);
+  const ps = Math.floor(planetSec % 60);
+  const el = document.getElementById('info-planet-time');
+  if (el) el.textContent = `${String(pd).padStart(2,'0')}d : ${String(ph).padStart(2,'0')}h : ${String(pm).padStart(2,'0')}m : ${String(ps).padStart(2,'0')}s`;
+}, 1000);
+
+// ==========================================
+// 11. Animate Loop
+// ==========================================
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.1);
+
+  if (currentMode === 'space') {
+    PLANETS.forEach(p => {
+      const g = planetGroups[p.id];
+      if (!g) return;
+      if (g.userData.model) g.userData.model.rotation.y += 0.2 * dt;
+      if (g.userData.ring) g.userData.ring.rotation.z += 0.15 * dt;
+    });
+
+    if (!shipTraveling && (keys.w || keys.a || keys.s || keys.d || keys.space || keys.shift)) {
+      const dir = new THREE.Vector3();
+      camera.getWorldDirection(dir);
+      const forward = dir.clone().normalize();
+      const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
+      const delta = new THREE.Vector3();
+      if (keys.w) delta.add(forward);
+      if (keys.s) delta.sub(forward);
+      if (keys.d) delta.add(right);
+      if (keys.a) delta.sub(right);
+      if (keys.space) delta.y += 1;
+      if (keys.shift) delta.y -= 1;
+      delta.normalize().multiplyScalar(30 * dt);
+      camera.position.add(delta);
+      controls.target.add(delta);
+    }
+
+    updateShip(dt);
+    controls.update();
+    renderer.render(spaceScene, camera);
+    updateLabels();
+  }
+  else if (currentMode === 'planet') {
+    updatePlayerTPS(dt);
+    updateTPSCamera(dt);
+    updateInteraction();
+    updateSkinTrigger();
+    updateVideoTrigger();   // ← جديد
+
+    if (playerGroup) {
+      const { x, y, z } = playerGroup.position;
+      const posEl = document.getElementById('player-pos-display');
+      if (posEl) {
+        posEl.textContent = `📍 Pos: X: ${x.toFixed(2)} | Y: ${y.toFixed(2)} | Z: ${z.toFixed(2)}`;
+      }
+    }
+
+    renderer.render(planetScene, camera);
+  }
+}
+
+function onResize() {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+}
+
+// ==========================================
+// 12. دخول عالم الكوكب
+// ==========================================
+window.enterPlanetWorld = function () {
+  const p = PLANETS[currentIdx];
+  if (!p.hasWorld) return;
+  document.getElementById('player-pos-display').style.display = 'block';
+  document.getElementById('planet-info').style.display = 'none';
+  document.getElementById('nav-dock').style.display = 'none';
+  document.getElementById('top-controls').style.display = 'none';
+  document.getElementById('controls-hint').style.display = 'none';
+  document.getElementById('exit-world-btn').classList.add('active');
+
+  if (isMobile) {
+    document.getElementById('tps-controls').classList.add('active');
+  }
+
+  const warp = document.getElementById('warp-effect');
+  warp.classList.add('show');
+
+  setTimeout(() => {
+    Object.values(labels).forEach(l => l.style.display = 'none');
+    warp.classList.remove('show');
+
+    buildMillerWorld();
+
+    currentMode = 'planet';
+controls.enabled = false;
+
+    // ⏱️ ابدأ عداد Live Time
+    startLiveTimeCounter();
+    
+    // 🎵 شغّل صوت الخلفية
+    playAmbient();
+
+    showHint('🌊 وصلت إلى عالم ميلر', 3000);
+  }, 800);
+};
+
+window.exitPlanetWorld = function () {
+  if (planetScene) {
+    planetScene.traverse(obj => {
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        if (Array.isArray(obj.material)) obj.material.forEach(m => m.dispose());
+        else obj.material.dispose();
+      }
+    });
+  }
+  planetScene = null;
+  playerGroup = null;
+  playerMixer = null;
+  playerAction = null;
+  playerAnimationClips = {};
+  worldMapObject = null;
+  SKIN_CONFIG.object = null;
+  VIDEO_OBJECT_CONFIG.object = null;   // ← جديد
+
+stopLiveTimeCounter();   // ⏱️ أوقف العداد
+stopAmbient();
+
+  document.getElementById('player-pos-display').style.display = 'none';
+  document.getElementById('planet-info').style.display = 'block';
+  document.getElementById('nav-dock').style.display = 'flex';
+  document.getElementById('top-controls').style.display = 'flex';
+  document.getElementById('controls-hint').style.display = isMobile ? 'none' : 'block';
+  document.getElementById('exit-world-btn').classList.remove('active');
+  document.getElementById('tps-controls').classList.remove('active');
+  document.getElementById('interact-btn').classList.remove('show');
+
+  Object.values(labels).forEach(l => l.style.display = 'block');
+
+  currentMode = 'space';
+  scene = spaceScene;
+  controls.enabled = true;
+
+  const p = PLANETS[currentIdx];
+  const targetPos = new THREE.Vector3(p.pos.x, p.pos.y, p.pos.z);
+  camera.position.copy(targetPos.clone().add(new THREE.Vector3(0, 15, 45)));
+  controls.target.copy(targetPos);
+
+  showHint('🚀 رجعت للفضاء', 2000);
+};
+
+// ==========================================
+// 13. بناء عالم ميلر
+// ==========================================
+function buildMillerWorld() {
+  planetScene = new THREE.Scene();
+  planetScene.background = new THREE.Color(0x001a33);
+  planetScene.fog = new THREE.FogExp2(0x005c97, 0.015);
+
+  const ambient = new THREE.AmbientLight(0x88bbff, 0.7);
+  planetScene.add(ambient);
+
+  const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+  sun.position.set(50, 100, 30);
+  sun.castShadow = true;
+  sun.shadow.mapSize.width = 2048;
+  sun.shadow.mapSize.height = 2048;
+  sun.shadow.camera.left = -60;
+  sun.shadow.camera.right = 60;
+  sun.shadow.camera.top = 60;
+  sun.shadow.camera.bottom = -60;
+  planetScene.add(sun);
+
+  gltfLoader.load(
+    WORLD_CONFIG.mapUrl,
+    gltf => {
+      const worldMap = gltf.scene;
+
+      const rawBox = new THREE.Box3().setFromObject(worldMap);
+      const rawSize = rawBox.getSize(new THREE.Vector3());
+      const footprint = Math.max(rawSize.x, rawSize.z) || 1;
+      const autoScale = WORLD_CONFIG.targetSize / footprint;
+
+      worldMap.position.set(
+        WORLD_CONFIG.position.x,
+        WORLD_CONFIG.position.y,
+        WORLD_CONFIG.position.z
+      );
+      worldMap.rotation.set(
+        WORLD_CONFIG.rotation.x,
+        WORLD_CONFIG.rotation.y,
+        WORLD_CONFIG.rotation.z
+      );
+      worldMap.scale.setScalar(autoScale);
+
+      worldMap.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+
+      planetScene.add(worldMap);
+      worldMapObject = worldMap;
+
+      worldMap.updateMatrixWorld(true);
+      const worldBox = new THREE.Box3().setFromObject(worldMap);
+      worldMaxY = worldBox.max.y + 20;
+
+      console.log('✅ تم تحميل الماب 3D — Scale:', autoScale.toFixed(3));
+
+      // ⭐ بعد تحميل الماب، حمّل السكن والرسالة
+      createMessageBox();
+      loadSkinObject();
+      loadVideoObject();   // ← جديد
+      createPlayer();
+    },
+    xhr => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        showHint('🌍 جاري تحميل العالم... ' + pct + '%', 500);
+      }
+    },
+    err => {
+      console.warn('فشل تحميل الماب:', err);
+      const groundGeo = new THREE.CircleGeometry(60, 64);
+      const groundMat = new THREE.MeshStandardMaterial({ color: 0xc2a878, roughness: 0.9 });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.receiveShadow = true;
+      planetScene.add(ground);
+
+      createMessageBox();
+      loadSkinObject();
+      createPlayer();
+    }
+  );
+}
+
+// ==========================================
+// 13.1. الرسالة السرية (صندوق)
+// ==========================================
+// ==========================================
+// 13.1. الرسالة السرية (بصيغة GLB)
+// ==========================================
+function createMessageBox() {
+  const targetPos = { x: 14.34, y: -18.46, z: -21.24 };
+
+  gltfLoader.load(
+    'models/message.glb', // ← حط هنا مسار ملف الـ GLB الخاص بالرسالة
+    gltf => {
+      const group = gltf.scene;
+      group.position.set(targetPos.x, targetPos.y, targetPos.z);
+      group.scale.setScalar(0.03); // حجم النموذج (تقدر تعدله حسب حجم ملفك)
+
+      group.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+
+      // إضاءة خفيفة حول النموذج عشان يبرز في العالم
+      const light = new THREE.PointLight(0xffb347, 2, 15);
+      light.position.y = 2;
+      group.add(light);
+
+      planetScene.add(group);
+      planetScene.userData.messageBox = group; // عشان نظام التفاعل يتعرف عليه
+      
+      console.log('✅ تم تحميل صندوق الرسالة GLB بنجاح');
+    },
+    undefined,
+    err => {
+      console.warn('⚠️ فشل تحميل ملف الـ GLB للرسالة، جاري استخدام الشكل الافتراضي:', err);
+      // في حال ما حصل الملف، يسوي صندوق افتراضي بديل عشان ما يوقف اللعبة
+      createFallbackMessageBox(targetPos);
+    }
+  );
+}
+
+// دالة بديلة لو ما تحمّل ملف الـ GLB
+function createFallbackMessageBox(pos) {
+  const group = new THREE.Group();
+  group.position.set(pos.x, pos.y, pos.z);
+
+  const boxGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+  const boxMat = new THREE.MeshStandardMaterial({
+    color: 0xffb347,
+    emissive: 0xffb347,
+    emissiveIntensity: 0.8,
+    metalness: 0.8,
+    roughness: 0.2
+  });
+  const box = new THREE.Mesh(boxGeo, boxMat);
+  box.castShadow = true;
+  box.position.y = 1;
+  group.add(box);
+
+  const light = new THREE.PointLight(0xffb347, 2, 15);
+  light.position.y = 2;
+  group.add(light);
+
+  planetScene.add(group);
+  planetScene.userData.messageBox = group;
+}
+
+// ==========================================
+// 13.2. السكن (Skin) — نقطة التفاعل 🎁
+// ==========================================
+function loadSkinObject() {
+  gltfLoader.load(
+    SKIN_CONFIG.url,
+    gltf => {
+      const skin = gltf.scene;
+
+      skin.position.set(
+        SKIN_CONFIG.position.x,
+        SKIN_CONFIG.position.y,
+        SKIN_CONFIG.position.z
+      );
+      skin.rotation.set(
+        SKIN_CONFIG.rotation.x,
+        SKIN_CONFIG.rotation.y,
+        SKIN_CONFIG.rotation.z
+      );
+      skin.scale.setScalar(SKIN_CONFIG.scale);
+
+      skin.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+
+      // ⭐ أضف هالة حول السكن
+      const halo = createSkinHalo(skin);
+      skin.add(halo);
+      skin.userData.halo = halo;
+
+      planetScene.add(skin);
+      SKIN_CONFIG.object = skin;
+
+      console.log('✅ تم تحميل السكن في', SKIN_CONFIG.position);
+    },
+    xhr => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        showHint('🎁 جاري تحميل السكن... ' + pct + '%', 500);
+      }
+    },
+    err => {
+      console.warn('فشل تحميل السكن:', err);
+      // بديل: صندوق بسيط في نفس الإحداثي عشان تعرف الموقع
+      const placeholder = new THREE.Group();
+      placeholder.position.set(
+        SKIN_CONFIG.position.x,
+        SKIN_CONFIG.position.y,
+        SKIN_CONFIG.position.z
+      );
+
+      const phGeo = new THREE.BoxGeometry(2, 3, 2);
+      const phMat = new THREE.MeshStandardMaterial({
+        color: 0x00ffaa,
+        emissive: 0x00ffaa,
+        emissiveIntensity: 0.5,
+        transparent: true,
+        opacity: 0.7
+      });
+      const ph = new THREE.Mesh(phGeo, phMat);
+      ph.position.y = 1.5;
+      placeholder.add(ph);
+
+      planetScene.add(placeholder);
+      SKIN_CONFIG.object = placeholder;
+
+      console.log('⚠️ السكن ما تحمّل — حطيت بديل في الإحداثي');
+    }
+  );
+}
+
+function createSkinHalo(skin) {
+  const group = new THREE.Group();
+
+  const box = new THREE.Box3().setFromObject(skin);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  const radius = Math.max(size.x, size.z) * 0.7;
+
+  const ringGeo = new THREE.RingGeometry(radius, radius + 0.4, 64);
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0x00ffaa,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.6
+  });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = -center.y + 0.1;
+  group.add(ring);
+
+  const iconGeo = new THREE.OctahedronGeometry(0.8);
+  const iconMat = new THREE.MeshStandardMaterial({
+    color: 0x00ffaa,
+    emissive: 0x00ffaa,
+    emissiveIntensity: 2
+  });
+  const icon = new THREE.Mesh(iconGeo, iconMat);
+  icon.position.y = size.y + 2;
+  group.add(icon);
+  group.userData.icon = icon;
+
+  const light = new THREE.PointLight(0x00ffaa, 2, 15);
+  light.position.y = size.y / 2;
+  group.add(light);
+
+  return group;
+}
+
+// ==========================================
+// 14. الشخصية (Player)
+// ==========================================
+function createPlayer() {
+  playerGroup = new THREE.Group();
+  playerGroup.position.set(0, 0, 0);
+
+  fbxLoader.load(
+    CHARACTER_CONFIG.modelUrl,
+    fbx => {
+      const model = fbx;
+
+      model.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+          c.frustumCulled = false;
+        }
+      });
+
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.sub(center);
+      model.position.y += size.y / 2;
+
+      const sf = CHARACTER_CONFIG.height / size.y;
+      const wrapper = new THREE.Group();
+      wrapper.add(model);
+      wrapper.scale.setScalar(sf);
+
+      playerGroup.add(wrapper);
+
+      loadFBXAnimations(model);
+
+      planetScene.add(playerGroup);
+    },
+    undefined,
+    err => {
+      console.warn('فشل تحميل الشخصية FBX', err);
+      buildFallbackPlayer();
+    }
+  );
+}
+
+function loadFBXAnimations(model) {
+  playerMixer = new THREE.AnimationMixer(model);
+  playerAnimationClips = {};
+
+  const files = CHARACTER_CONFIG.files;
+  const keys = Object.keys(files);
+  let loaded = 0;
+
+  keys.forEach(key => {
+    fbxLoader.load(
+      files[key],
+      fbx => {
+        loaded++;
+
+        if (fbx.animations && fbx.animations.length > 0) {
+          const clip = fbx.animations[0].clone();
+          clip.name = key;
+
+          clip.tracks = clip.tracks.filter(track => {
+            const nodeName = track.name.split('.')[0].toLowerCase();
+            const isPositionTrack = track.name.toLowerCase().includes('.position');
+            const isRootNode = nodeName.includes('hips') || nodeName.includes('root') || nodeName.includes('armature');
+            return !(isPositionTrack && isRootNode);
+          });
+
+          playerAnimationClips[key] = clip;
+        }
+
+        if (loaded === keys.length) {
+          if (playerAnimationClips.idle) {
+            playerAction = playerMixer.clipAction(playerAnimationClips.idle);
+            playerAction.play();
+          }
+          console.log('✅ الأنيميشنات جاهزة:', Object.keys(playerAnimationClips));
+        }
+      },
+      undefined,
+      err => {
+        console.warn('فشل تحميل FBX:', files[key], err);
+        loaded++;
+      }
+    );
+  });
+}
+
+function buildFallbackPlayer() {
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0x00d2ff, metalness: 0.5, roughness: 0.5 });
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.4, 1, 4, 8), bodyMat);
+  body.position.y = 0.9;
+  body.castShadow = true;
+  playerGroup.add(body);
+
+  const headMat = new THREE.MeshStandardMaterial({ color: 0xffe0bd });
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 16), headMat);
+  head.position.y = 1.8;
+  head.castShadow = true;
+  playerGroup.add(head);
+
+  planetScene.add(playerGroup);
+}
+
+// ==========================================
+// 15. حركة اللاعب
+// ==========================================
+function updatePlayerTPS(dt) {
+  if (!playerGroup) return;
+
+  if (playerMixer) playerMixer.update(dt);
+
+  let inputX = 0;
+  let inputY = 0;
+
+  if (keys.w) inputY -= 1;
+  if (keys.s) inputY += 1;
+  if (keys.a) inputX -= 1;
+  if (keys.d) inputX += 1;
+
+  if (joystickActive) {
+    inputX = joystickValue.x;
+    inputY = joystickValue.y;
+  }
+
+  const mag = Math.hypot(inputX, inputY);
+  const isMoving = mag > 0.1;
+
+  if (isMoving) {
+    const angle = Math.atan2(inputX, inputY);
+    const moveDir = new THREE.Vector3(
+      Math.sin(cameraYaw + angle),
+      0,
+      Math.cos(cameraYaw + angle)
+    );
+
+    const speed = isRunning ? PLAYER_RUN_SPEED : PLAYER_SPEED;
+    const moveAmt = Math.min(mag, 1) * speed * dt;
+
+    playerGroup.position.x += moveDir.x * moveAmt;
+    playerGroup.position.z += moveDir.z * moveAmt;
+
+    const targetRotation = Math.atan2(moveDir.x, moveDir.z);
+    playerGroup.rotation.y = THREE.MathUtils.lerp(
+      playerGroup.rotation.y,
+      targetRotation,
+      0.2
+    );
+
+       updatePlayerAnimation(isRunning ? 'run' : 'walk');
+    // 🎵 صوت الخطوات
+    updateFootstepSound(dt, true, isRunning);
+  } else {
+    updatePlayerAnimation('idle');
+    // 🎵 أوقف صوت الخطوات
+    updateFootstepSound(dt, false, false);
+  }
+  const maxDist = 200;
+  const dist = Math.hypot(playerGroup.position.x, playerGroup.position.z);
+  if (dist > maxDist) {
+    const scale = maxDist / dist;
+    playerGroup.position.x *= scale;
+    playerGroup.position.z *= scale;
+  }
+
+  const jumpPressed = keys.space || isJumpBtnPressed;
+  if (jumpPressed && playerOnGround) {
+    playerVelocityY = PLAYER_JUMP;
+    playerOnGround = false;
+    updatePlayerAnimation('jump');
+  }
+
+  playerVelocityY -= GRAVITY * dt;
+  playerGroup.position.y += playerVelocityY * dt;
+
+  let groundY = -Infinity;
+
+  if (worldMapObject) {
+    const origin = new THREE.Vector3(
+      playerGroup.position.x,
+      worldMaxY,
+      playerGroup.position.z
+    );
+
+    raycaster.set(origin, downVector);
+    raycaster.far = worldMaxY + 50;
+    const intersects = raycaster.intersectObject(worldMapObject, true);
+
+    if (intersects.length > 0) {
+      groundY = intersects[0].point.y;
+    }
+  }
+
+  if (groundY > -Infinity) {
+    if (playerGroup.position.y <= groundY) {
+      playerGroup.position.y = groundY;
+      playerVelocityY = 0;
+      playerOnGround = true;
+    }
+  } else {
+    if (playerGroup.position.y <= 0) {
+      playerGroup.position.y = 0;
+      playerVelocityY = 0;
+      playerOnGround = true;
+    }
+  }
+}
+
+function updatePlayerAnimation(name) {
+  if (!playerMixer || !playerAnimationClips[name]) return;
+
+  const newAction = playerMixer.clipAction(playerAnimationClips[name]);
+  if (playerAction === newAction) return;
+
+  if (playerAction) {
+    playerAction.fadeOut(0.2);
+  }
+  newAction.reset().fadeIn(0.2).play();
+  playerAction = newAction;
+}
+
+// ==========================================
+// 16. كاميرا TPS
+// ==========================================
+function updateTPSCamera(dt) {
+  if (!playerGroup) return;
+
+  const targetPos = playerGroup.position.clone();
+  targetPos.y += CAMERA_HEIGHT;
+
+  const offsetX = Math.sin(cameraYaw) * CAMERA_DISTANCE;
+  const offsetZ = Math.cos(cameraYaw) * CAMERA_DISTANCE;
+
+  const camTarget = new THREE.Vector3(
+    targetPos.x + offsetX,
+    targetPos.y + Math.sin(cameraPitch) * CAMERA_DISTANCE,
+    targetPos.z + offsetZ
+  );
+
+  camera.position.lerp(camTarget, 0.15);
+  camera.lookAt(targetPos);
+}
+
+// ==========================================
+// 17. التفاعل — رسالة + سكن
+// ==========================================
+function updateInteraction() {
+  if (!playerGroup || !planetScene) return;
+
+  const messageBox = planetScene.userData.messageBox;
+  if (!messageBox) return;
+
+  const dist = playerGroup.position.distanceTo(messageBox.position);
+
+  if (dist < 5 && !PLANETS[currentIdx].completed) {
+    document.getElementById('interact-btn').classList.add('show');
+  } else {
+    document.getElementById('interact-btn').classList.remove('show');
+  }
+}
+
+function updateSkinTrigger() {
+  if (!playerGroup || !SKIN_CONFIG.object) return;
+
+  const dist = playerGroup.position.distanceTo(SKIN_CONFIG.object.position);
+
+  if (dist < SKIN_CONFIG.interactDistance && !SKIN_CONFIG.completed) {
+    document.getElementById('interact-btn').classList.add('show');
+  }
+}
+
+window.handleInteract = function () {
+  if (!playerGroup || !planetScene) return;
+
+  // 1) فحص رسالة ميلر (مع قفل الرمز)
+  const messageBox = planetScene.userData.messageBox;
+  if (messageBox) {
+    const distMsg = playerGroup.position.distanceTo(messageBox.position);
+    if (distMsg < 5 && !PLANETS[currentIdx].completed) {
+      // إذا المهمة لم تكتمل بعد، نظهر نافذة إدخال الرمز بدل فتحها مباشرة
+      document.getElementById('message-lock-modal').style.display = 'flex';
+      return;
+    }
+  }
+
+  // 2) فحص السكن
+  if (SKIN_CONFIG.object) {
+    const dist = playerGroup.position.distanceTo(SKIN_CONFIG.object.position);
+    if (dist < SKIN_CONFIG.interactDistance && !SKIN_CONFIG.completed) {
+      openSkinMenu();
+      return;
+    }
+  }
+
+  // 3) فحص الفيديو
+  if (VIDEO_OBJECT_CONFIG.object) {
+    const dist = playerGroup.position.distanceTo(VIDEO_OBJECT_CONFIG.object.position);
+    if (dist < VIDEO_OBJECT_CONFIG.interactDistance && !VIDEO_OBJECT_CONFIG.viewed) {
+      playVideo();
+    }
+  }
+};
+
+// للتوافق مع الكود القديم
+window.interact = window.handleInteract;
+
+window.closeMessageModal = function () {
+  document.getElementById('message-modal').classList.remove('show');
+  setTimeout(() => {
+    exitPlanetWorld();
+  }, 500);
+};
+
+// ==========================================
+// 18. Skin Menu + Mini Game
+// ==========================================
+window.openSkinMenu = function () {
+  document.getElementById('skin-menu-modal').style.display = 'flex';
+};
+
+window.closeSkinMenu = function () {
+  document.getElementById('skin-menu-modal').style.display = 'none';
+};
+
+window.startSkinMission = function () {
+  closeSkinMenu();
+  document.getElementById('skin-minigame-modal').style.display = 'flex';
+  initSkinMiniGame();
+};
+
+function initSkinMiniGame() {
+  const grid = document.getElementById('minigame-grid');
+  grid.innerHTML = '';
+
+  let score = 0;
+  const target = 5;
+  const scoreEl = document.getElementById('minigame-score');
+  const statusEl = document.getElementById('minigame-status');
+  if (scoreEl) scoreEl.textContent = `0 / ${target}`;
+  if (statusEl) statusEl.textContent = 'انقري على المربعات المضيئة قبل ما تختفي!';
+
+  const colors = ['#00ffaa', '#00d2ff', '#9d4edd', '#ffb347'];
+
+  const interval = setInterval(() => {
+    if (score >= target) {
+      clearInterval(interval);
+      onMiniGameWin();
+      return;
+    }
+
+    grid.innerHTML = '';
+
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.style.cssText = `
+        width: 60px; height: 60px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid rgba(255,255,255,0.1);
+        cursor: pointer;
+        transition: all 0.15s;
+      `;
+
+      if (Math.random() < 0.3) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        cell.style.background = color;
+        cell.style.boxShadow = `0 0 30px ${color}`;
+        cell.dataset.target = 'true';
+      }
+
+      cell.onclick = () => {
+        if (cell.dataset.target === 'true' && !cell.dataset.clicked) {
+          cell.dataset.clicked = 'true';
+          score++;
+          if (scoreEl) scoreEl.textContent = `${score} / ${target}`;
+          cell.style.transform = 'scale(0)';
+          playTone(800 + score * 100, 0.1, 'sine');
+        } else if (!cell.dataset.target) {
+          score = Math.max(0, score - 1);
+          if (scoreEl) scoreEl.textContent = `${score} / ${target}`;
+          playTone(200, 0.15, 'sawtooth');
+        }
+      };
+
+      grid.appendChild(cell);
+    }
+  }, 1200);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    if (score < target) {
+      if (statusEl) statusEl.textContent = '⏰ انتهى الوقت!';
+      setTimeout(onMiniGameLose, 1500);
+    }
+  }, 20000);
+}
+
+function onMiniGameWin() {
+  const statusEl = document.getElementById('minigame-status');
+  if (statusEl) statusEl.textContent = '🎉 نجحت!';
+
+  setTimeout(() => {
+    document.getElementById('skin-minigame-modal').style.display = 'none';
+    showRewardCode();
+  }, 1200);
+}
+
+function onMiniGameLose() {
+  document.getElementById('skin-minigame-modal').style.display = 'none';
+  showHint('حاول مرة ثانية 🎮', 2000);
+}
+
+function showRewardCode() {
+  localStorage.setItem('rewardCode', SKIN_CONFIG.rewardCode);
+
+  document.getElementById('skin-code-display').textContent = SKIN_CONFIG.rewardCode;
+  document.getElementById('skin-reward-modal').style.display = 'flex';
+
+  SKIN_CONFIG.completed = true;
+
+  // اخفي الهالة
+  if (SKIN_CONFIG.object && SKIN_CONFIG.object.userData.halo) {
+    SKIN_CONFIG.object.userData.halo.visible = false;
+  }
+}
+
+window.closeRewardModal = function () {
+  document.getElementById('skin-reward-modal').style.display = 'none';
+};
+
+// ==========================================
+// 19. Joystick + Mobile Controls
+// ==========================================
+function setupMobileControls() {
+  const joystickZone = document.getElementById('joystick-zone');
+  const joystick = document.getElementById('joystick');
+  const knob = document.getElementById('joystick-knob');
+  const cameraZone = document.getElementById('camera-zone');
+
+  joystickZone.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = joystickZone.getBoundingClientRect();
+
+    joystickCenter.x = touch.clientX - rect.left;
+    joystickCenter.y = touch.clientY - rect.top;
+
+    joystick.style.left = joystickCenter.x + 'px';
+    joystick.style.top = joystickCenter.y + 'px';
+    joystick.style.transform = 'translate(-50%, -50%)';
+    joystick.classList.add('active');
+    joystickActive = true;
+  }, { passive: false });
+
+  joystickZone.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!joystickActive) return;
+    const touch = e.touches[0];
+    const rect = joystickZone.getBoundingClientRect();
+
+    const dx = touch.clientX - rect.left - joystickCenter.x;
+    const dy = touch.clientY - rect.top - joystickCenter.y;
+
+    const maxDist = 45;
+    const dist = Math.hypot(dx, dy);
+    const clampedDist = Math.min(dist, maxDist);
+
+    const angle = Math.atan2(dy, dx);
+    const kx = Math.cos(angle) * clampedDist;
+    const ky = Math.sin(angle) * clampedDist;
+
+    knob.style.transform = `translate(calc(-50% + ${kx}px), calc(-50% + ${ky}px))`;
+
+    joystickValue.x = kx / maxDist;
+    joystickValue.y = ky / maxDist;
+
+    isRunning = dist > maxDist * 0.8;
+  }, { passive: false });
+
+  const endJoy = e => {
+    joystickActive = false;
+    joystick.classList.remove('active');
+    knob.style.transform = 'translate(-50%, -50%)';
+    joystickValue.x = 0;
+    joystickValue.y = 0;
+    isRunning = false;
+  };
+
+  joystickZone.addEventListener('touchend', endJoy);
+  joystickZone.addEventListener('touchcancel', endJoy);
+
+  let camTouchId = null;
+  let camLastPos = { x: 0, y: 0 };
+
+  cameraZone.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    camTouchId = touch.identifier;
+    camLastPos.x = touch.clientX;
+    camLastPos.y = touch.clientY;
+  }, { passive: false });
+
+  cameraZone.addEventListener('touchmove', e => {
+    e.preventDefault();
+    for (const touch of e.changedTouches) {
+      if (touch.identifier === camTouchId) {
+        const dx = touch.clientX - camLastPos.x;
+        const dy = touch.clientY - camLastPos.y;
+        cameraYaw -= dx * 0.005;
+        cameraPitch += dy * 0.005;
+        cameraPitch = Math.max(-0.2, Math.min(0.9, cameraPitch));
+        camLastPos.x = touch.clientX;
+        camLastPos.y = touch.clientY;
+      }
+    }
+  }, { passive: false });
+
+  cameraZone.addEventListener('touchend', e => {
+    for (const touch of e.changedTouches) {
+      if (touch.identifier === camTouchId) camTouchId = null;
+    }
+  });
+
+  const jumpBtn = document.getElementById('jump-btn');
+  jumpBtn.addEventListener('touchstart', e => { e.preventDefault(); isJumpBtnPressed = true; });
+  jumpBtn.addEventListener('touchend', e => { e.preventDefault(); isJumpBtnPressed = false; });
+  jumpBtn.addEventListener('mousedown', () => { isJumpBtnPressed = true; });
+  jumpBtn.addEventListener('mouseup', () => { isJumpBtnPressed = false; });
+
+  const runBtn = document.getElementById('run-btn');
+  runBtn.addEventListener('touchstart', e => { e.preventDefault(); isRunning = true; });
+  runBtn.addEventListener('touchend', e => { e.preventDefault(); isRunning = false; });
+
+  cameraZone.addEventListener('mousedown', e => {
+    if (currentMode !== 'planet') return;
+    let lastX = e.clientX, lastY = e.clientY;
+    const onMove = ev => {
+      cameraYaw -= (ev.clientX - lastX) * 0.005;
+      cameraPitch += (ev.clientY - lastY) * 0.005;
+      cameraPitch = Math.max(-0.2, Math.min(0.9, cameraPitch));
+      lastX = ev.clientX;
+      lastY = ev.clientY;
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+// ==========================================
+// 20. Hint
+// ==========================================
+function showHint(text, duration = 3000) {
+  const hint = document.getElementById('world-hint');
+  hint.textContent = text;
+  hint.classList.add('show');
+  setTimeout(() => hint.classList.remove('show'), duration);
+}
+// ==========================================
+// 🎬 نظام الفيديو
+// ==========================================
+function loadVideoObject() {
+  gltfLoader.load(
+    VIDEO_OBJECT_CONFIG.url,
+    gltf => {
+      const obj = gltf.scene;
+      obj.position.set(
+        VIDEO_OBJECT_CONFIG.position.x,
+        VIDEO_OBJECT_CONFIG.position.y,
+        VIDEO_OBJECT_CONFIG.position.z
+      );
+      obj.rotation.set(
+        VIDEO_OBJECT_CONFIG.rotation.x,
+        VIDEO_OBJECT_CONFIG.rotation.y,
+        VIDEO_OBJECT_CONFIG.rotation.z
+      );
+      obj.scale.setScalar(VIDEO_OBJECT_CONFIG.scale);
+
+      obj.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+
+      const halo = createVideoObjectHalo(obj);
+      obj.add(halo);
+      obj.userData.halo = halo;
+
+      planetScene.add(obj);
+      VIDEO_OBJECT_CONFIG.object = obj;
+
+      console.log('✅ تم تحميل البوت الثاني (فيديو)');
+    },
+    xhr => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        showHint('🎬 جاري تحميل الأوبجكت... ' + pct + '%', 500);
+      }
+    },
+    err => {
+      console.warn('فشل تحميل البوت الثاني:', err);
+      const placeholder = new THREE.Group();
+      placeholder.position.set(
+        VIDEO_OBJECT_CONFIG.position.x,
+        VIDEO_OBJECT_CONFIG.position.y,
+        VIDEO_OBJECT_CONFIG.position.z
+      );
+
+      const phGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+      const phMat = new THREE.MeshStandardMaterial({
+        color: 0xff0066,
+        emissive: 0xff0066,
+        emissiveIntensity: 0.5,
+        transparent: true,
+        opacity: 0.8
+      });
+      const ph = new THREE.Mesh(phGeo, phMat);
+      ph.position.y = 1;
+      placeholder.add(ph);
+
+      planetScene.add(placeholder);
+      VIDEO_OBJECT_CONFIG.object = placeholder;
+    }
+  );
+}
+
+function createVideoObjectHalo(obj) {
+  const group = new THREE.Group();
+
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  const radius = Math.max(size.x, size.z) * 0.7;
+
+  const ringGeo = new THREE.RingGeometry(radius, radius + 0.4, 64);
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0xff0066,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.7
+  });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = -center.y + 0.1;
+  group.add(ring);
+
+  const iconGeo = new THREE.TetrahedronGeometry(0.9);
+  const iconMat = new THREE.MeshStandardMaterial({
+    color: 0xff0066,
+    emissive: 0xff0066,
+    emissiveIntensity: 2
+  });
+  const icon = new THREE.Mesh(iconGeo, iconMat);
+  icon.position.y = size.y + 2;
+  group.add(icon);
+
+  const light = new THREE.PointLight(0xff0066, 2, 15);
+  light.position.y = size.y / 2;
+  group.add(light);
+
+  return group;
+}
+
+function updateVideoTrigger() {
+  if (!playerGroup || !VIDEO_OBJECT_CONFIG.object) return;
+
+  const dist = playerGroup.position.distanceTo(VIDEO_OBJECT_CONFIG.object.position);
+  if (dist < VIDEO_OBJECT_CONFIG.interactDistance && !VIDEO_OBJECT_CONFIG.viewed) {
+    document.getElementById('interact-btn').classList.add('show');
+  }
+}
+
+window.playVideo = function () {
+  const modal = document.getElementById('video-modal');
+  const video = document.getElementById('video-player');
+  modal.style.display = 'flex';
+  video.currentTime = 0;
+  video.load();
+  // 🎯 المستخدم يضغط Play بنفسه
+};
+
+window.closeVideo = function () {
+  const modal = document.getElementById('video-modal');
+  const video = document.getElementById('video-player');
+  video.pause();
+  video.currentTime = 0;
+  modal.style.display = 'none';
+  VIDEO_OBJECT_CONFIG.viewed = true;
+
+  if (VIDEO_OBJECT_CONFIG.object && VIDEO_OBJECT_CONFIG.object.userData.halo) {
+    VIDEO_OBJECT_CONFIG.object.userData.halo.visible = false;
+  }
+
+  showHint('🎬 شاهدتِ الرسالة', 2000);
+};
+
+// ==========================================
+// ⏱️ Live Time Counter
+// ==========================================
+function startLiveTimeCounter() {
+  missionStartTime = performance.now();
+  const panel = document.getElementById('live-time-panel');
+  panel.classList.add('active');
+
+  if (liveTimeInterval) clearInterval(liveTimeInterval);
+
+  liveTimeInterval = setInterval(updateLiveTimeDisplay, 100);
+  updateLiveTimeDisplay();
+}
+
+function stopLiveTimeCounter() {
+  if (liveTimeInterval) {
+    clearInterval(liveTimeInterval);
+    liveTimeInterval = null;
+  }
+  const panel = document.getElementById('live-time-panel');
+  panel.classList.remove('active');
+}
+
+function updateLiveTimeDisplay() {
+  const elapsedMs = performance.now() - missionStartTime;
+  const elapsedSec = elapsedMs / 1000;
+
+  const missionH = Math.floor(elapsedSec / 3600);
+  const missionM = Math.floor((elapsedSec % 3600) / 60);
+  const missionS = Math.floor(elapsedSec % 60);
+  const missionMs = Math.floor((elapsedSec * 100) % 100);
+
+  document.getElementById('lt-mission-time').textContent =
+    `${String(missionH).padStart(2,'0')}:${String(missionM).padStart(2,'0')}:${String(missionS).padStart(2,'0')}.${String(missionMs).padStart(2,'0')}`;
+
+  const earthElapsedSec = elapsedSec * TIME_DILATION_FACTOR;
+  const earthDays = earthElapsedSec / 86400;
+  const earthYears = Math.floor(earthDays / 365);
+  const remainDays = Math.floor(earthDays % 365);
+  const remainHours = Math.floor((earthElapsedSec % 86400) / 3600);
+
+  document.getElementById('lt-earth-time').textContent =
+    `${earthYears}y ${String(remainDays).padStart(2,'0')}d ${String(remainHours).padStart(2,'0')}h`;
+
+  document.getElementById('lt-miller-time').textContent =
+    `${String(missionH).padStart(2,'0')}:${String(missionM).padStart(2,'0')}:${String(missionS).padStart(2,'0')}`;
+
+  document.getElementById('lt-difference').textContent =
+    `+${earthYears}y ${remainDays}d ${remainHours}h`;
+}
+// ==========================================
+// 🎵 نظام الصوت
+// ==========================================
+
+// تحضير الأصوات
+function initAudio() {
+  // صوت الخلفية
+  const ambient = new Audio(AUDIO_CONFIG.ambient.url);
+  ambient.loop = AUDIO_CONFIG.ambient.loop;
+  ambient.volume = AUDIO_CONFIG.ambient.volume;
+  AUDIO_CONFIG.ambient.audio = ambient;
+
+  // صوت المشي
+  const footstep = new Audio(AUDIO_CONFIG.footstep.url);
+  footstep.volume = AUDIO_CONFIG.footstep.volume;
+  AUDIO_CONFIG.footstep.audio = footstep;
+}
+
+// تشغيل صوت الخلفية (fade in ناعم)
+function playAmbient() {
+  if (!AUDIO_CONFIG.ambient.audio) return;
+  if (AUDIO_CONFIG.muted) return;
+
+  const audio = AUDIO_CONFIG.ambient.audio;
+  audio.volume = 0;
+  audio.currentTime = 0;
+
+  audio.play().then(() => {
+    // fade in ناعم
+    let vol = 0;
+    const target = AUDIO_CONFIG.ambient.volume;
+    const fade = setInterval(() => {
+      vol += 0.02;
+      if (vol >= target) {
+        vol = target;
+        clearInterval(fade);
+      }
+      audio.volume = vol;
+    }, 50);
+    AUDIO_CONFIG.ambient.enabled = true;
+  }).catch(err => {
+    console.warn('تعذّر تشغيل صوت الخلفية:', err);
+  });
+}
+
+// إيقاف صوت الخلفية (fade out ناعم)
+function stopAmbient() {
+  const audio = AUDIO_CONFIG.ambient.audio;
+  if (!audio || !AUDIO_CONFIG.ambient.enabled) return;
+
+  // fade out
+  let vol = audio.volume;
+  const fade = setInterval(() => {
+    vol -= 0.02;
+    if (vol <= 0) {
+      vol = 0;
+      clearInterval(fade);
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    audio.volume = vol;
+  }, 50);
+
+  AUDIO_CONFIG.ambient.enabled = false;
+}
+
+// لعب صوت خطوة
+// لعب صوت خطوة
+function playFootstep() {
+  if (!AUDIO_CONFIG.footstep.audio) return;
+  if (AUDIO_CONFIG.muted) return;
+  if (!AUDIO_CONFIG.footstep.enabled) return;
+
+  const audio = AUDIO_CONFIG.footstep.audio;
+  
+  // نرجع الصوت للبداية ونشغله (بدون استنساخ عشان ما يتراكم ويسبب إزعاج)
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
+}
+
+// تحديث صوت الخطوات (يُستدعى من animate)
+function updateFootstepSound(dt, isMoving, isRunning) {
+  const audio = AUDIO_CONFIG.footstep.audio;
+  if (!audio) return;
+
+  if (!isMoving) {
+    // إذا وقف اللاعب: نوقف الصوت فوراً ونخلي العداد جاهز للخطوة الجاية
+    if (!audio.paused) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    // نعطي العداد قيمة الحد الأقصى عشان أول ما يمشي يشتغل الصوت فوراً
+    AUDIO_CONFIG.lastFootstepTime = AUDIO_CONFIG.footstep.walkInterval;
+    return;
+  }
+
+  const interval = isRunning 
+    ? AUDIO_CONFIG.footstep.runInterval 
+    : AUDIO_CONFIG.footstep.walkInterval;
+
+  AUDIO_CONFIG.lastFootstepTime += dt;
+
+  if (AUDIO_CONFIG.lastFootstepTime >= interval) {
+    AUDIO_CONFIG.lastFootstepTime = 0; // تصفير العداد للخطوة اللي بعدها
+    playFootstep();
+  }
+}
+
+// زر كتم الصوت
+window.toggleMute = function () {
+  AUDIO_CONFIG.muted = !AUDIO_CONFIG.muted;
+
+  const icon = document.getElementById('mute-icon');
+  const btn = document.getElementById('mute-btn');
+
+  if (AUDIO_CONFIG.muted) {
+    icon.className = 'fa-solid fa-volume-xmark';
+    btn.style.color = '#ff6666';
+    if (AUDIO_CONFIG.ambient.audio) {
+      AUDIO_CONFIG.ambient.audio.pause();
+    }
+  } else {
+    icon.className = 'fa-solid fa-volume-high';
+    btn.style.color = '#00d2ff';
+    if (AUDIO_CONFIG.ambient.audio && currentMode === 'planet') {
+      AUDIO_CONFIG.ambient.audio.play().catch(() => {});
+    }
+  }
+};
+// playTone
+let audioCtx = null;
+function playTone(freq, duration, type = 'sine') {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+// ==========================================
+// 21. Missions (للأزرار القديمة)
+// ==========================================
+window.startMission = function () {
+  const p = PLANETS[currentIdx];
+  if (p.mission === 'wave') missionWave();
+  else if (p.mission === 'code') missionCode();
+  else if (p.mission === 'stars') missionStars();
+  else if (p.mission === 'tesseract') {
+    document.getElementById('tesseract').style.display = 'flex';
+    completeMission();
+  }
+};
+
+function missionWave() {
+  const mb = document.getElementById('mission-box');
+  let score = 0;
+  mb.innerHTML = `
+    <div style="text-align: center; font-size: 11px; color: #67e8f9; margin-bottom: 6px;">انقري للقفز</div>
+    <div id="wave-box" style="width: 100%; height: 60px; background: #000; border-radius: 10px; position: relative; overflow: hidden; border: 1px solid rgba(0,210,255,0.3); cursor: pointer;">
+      <div id="ship-ico" style="position: absolute; bottom: 5px; right: 20px; font-size: 20px; transition: all 0.2s;">🚀</div>
+      <div id="wave-ico" style="position: absolute; bottom: 0; left: 0; font-size: 22px;">🌊</div>
+    </div>
+    <div style="font-size: 10px; color: #94a3b8; margin-top: 6px; text-align: center;">النتيجة: <span id="score" style="color: #fff; font-weight: bold;">0</span>/3</div>
+  `;
+  const box = document.getElementById('wave-box');
+  const wave = document.getElementById('wave-ico');
+  let pos = 0, sj = false;
+  box.onclick = () => {
+    if (sj) return;
+    sj = true;
+    const s = document.getElementById('ship-ico');
+    s.style.transform = 'translateY(-25px)';
+    setTimeout(() => { s.style.transform = 'translateY(0)'; sj = false; }, 350);
+  };
+  const iv = setInterval(() => {
+    if (!document.body.contains(box)) { clearInterval(iv); return; }
+    pos += 4;
+    if (pos > 100) {
+      pos = 0; score++;
+      document.getElementById('score').textContent = score;
+      if (score >= 3) { clearInterval(iv); completeMission(); }
+    }
+    wave.style.left = pos + '%';
+  }, 50);
+}
+
+function missionCode() {
+  const mb = document.getElementById('mission-box');
+  mb.innerHTML = `
+    <div style="text-align: center; font-size: 11px; color: #67e8f9; margin-bottom: 6px;">اكتبي: <b style="color:#fff;">FARAH-5D</b></div>
+    <input id="code-input" type="text" placeholder="الشفرة..." style="width: 100%; padding: 8px; background: #000; border: 1px solid rgba(0,242,254,0.4); border-radius: 8px; color: #fff; text-align: center; font-size: 12px; margin-bottom: 6px;">
+    <button onclick="checkCode()" style="width: 100%; padding: 6px; border-radius: 8px; background: #00f2fe; color: #000; font-weight: bold; border: none; cursor: pointer; font-size: 11px;">فك التشفير</button>
+  `;
+  window.checkCode = () => {
+    const v = document.getElementById('code-input').value.trim().toUpperCase();
+    if (v === 'FARAH-5D' || v === 'فرح') completeMission();
+    else alert('خطأ! جربي: FARAH-5D');
+  };
+}
+
+function missionStars() {
+  const mb = document.getElementById('mission-box');
+  let count = 0;
+  mb.innerHTML = `
+    <div style="text-align: center; font-size: 11px; color: #fcd34d; margin-bottom: 6px;">انقري النجوم</div>
+    <div style="display: flex; justify-content: space-around; padding: 8px 0;">
+      <button onclick="starClick(this)" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,179,71,0.2); border: 1px solid #ffb347; color: #ffb347; cursor: pointer;">⭐</button>
+      <button onclick="starClick(this)" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,179,71,0.2); border: 1px solid #ffb347; color: #ffb347; cursor: pointer;">⭐</button>
+      <button onclick="starClick(this)" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,179,71,0.2); border: 1px solid #ffb347; color: #ffb347; cursor: pointer;">⭐</button>
+    </div>
+  `;
+  window.starClick = (btn) => {
+    if (btn.dataset.clicked) return;
+    btn.dataset.clicked = '1';
+    btn.style.background = '#ffb347';
+    btn.style.color = '#000';
+    count++;
+    if (count >= 3) completeMission();
+  };
+}
+
+function completeMission() {
+  const p = PLANETS[currentIdx];
+  p.completed = true;
+  if (currentIdx + 1 < PLANETS.length) {
+    PLANETS[currentIdx + 1].unlocked = true;
+    refreshPlanetVisual(currentIdx + 1);
+  }
+  updateUI();
+  setTimeout(() => {
+    const next = PLANETS[currentIdx + 1];
+    alert('🎉 أحسنتِ! ' + (next ? 'تم فتح ' + next.name : 'أكملتِ المجرة'));
+  }, 300);
+}
+
+function refreshPlanetVisual(idx) {
+  const p = PLANETS[idx];
+  const g = planetGroups[p.id];
+  if (!g) return;
+  if (g.userData.ring) g.userData.ring.material.opacity = 0.35;
+  const model = g.userData.model;
+  if (model) {
+    model.traverse(c => {
+      if (c.isMesh && c.material) {
+        if (c.material.userData?.originalColor !== undefined) {
+          c.material.color.setHex(c.material.userData.originalColor);
+        }
+        c.material.transparent = false;
+        c.material.opacity = 1;
+      }
+    });
+  }
+  if (labels[p.id]) {
+    labels[p.id].innerHTML = `<span style="color: ${p.colorHex};">●</span> ${p.name}`;
+  }
+}
+
+// Progress
+let loadedCount = 0;
+function onLoadProgress() {
+  loadedCount++;
+  if (loadedCount >= PLANETS.length) {
+    setTimeout(() => {
+      const l = document.getElementById('loading');
+      l.classList.add('hide');
+      setTimeout(() => l.remove(), 700);
+    }, 500);
+  }
+}
+
+init();
+
+setTimeout(() => {
+  const l = document.getElementById('loading');
+  if (l) {
+    l.classList.add('hide');
+    setTimeout(() => l.remove(), 700);
+  }
+}, 6000);
+</script>
+
+<!-- ============ Video Modal 🎬 ============ -->
+<div id="video-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 80; align-items: center; justify-content: center; padding: 20px; flex-direction: column;">
+  <div style="width: 100%; max-width: 900px; position: relative;">
+    <video 
+      id="video-player" 
+      src="videos/message.mp4" 
+      controls 
+      playsinline
+      style="width: 100%; height: auto; border-radius: 16px; border: 2px solid rgba(255,0,102,0.5); box-shadow: 0 0 60px rgba(255,0,102,0.3);"
+      onended="closeVideo()"
+    ></video>
+    
+    <button 
+      onclick="closeVideo()" 
+      style="position: absolute; top: -50px; right: 0; padding: 10px 20px; background: rgba(255,0,102,0.8); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px;"
+    >
+      ✕ إغلاق
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
