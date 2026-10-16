@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>مجرة فرح | رحلة إنترستيلار</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -466,6 +468,750 @@
     .lt-row { font-size: 10px; }
     .lt-diff .lt-value { font-size: 11px; }
   }
+    /* ❄️ نسخة جليدية للعداد — كوكب مان */
+  #live-time-panel.ice-theme {
+    background: linear-gradient(135deg, rgba(220, 240, 255, 0.15), rgba(180, 220, 255, 0.1));
+    border: 1px solid rgba(200, 230, 255, 0.5);
+    box-shadow: 
+      0 0 40px rgba(200, 230, 255, 0.4),
+      inset 0 0 30px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  }
+  #live-time-panel.ice-theme::before {
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+    height: 2px;
+    box-shadow: 0 0 15px rgba(200, 230, 255, 0.8);
+  }
+  #live-time-panel.ice-theme::after {
+    border-top-color: rgba(200, 230, 255, 0.8);
+    border-left-color: rgba(200, 230, 255, 0.8);
+  }
+  #live-time-panel.ice-theme .lt-header {
+    color: rgba(220, 240, 255, 0.9);
+    border-bottom-color: rgba(200, 230, 255, 0.3);
+  }
+  #live-time-panel.ice-theme .lt-header-dot {
+    background: #ffffff;
+    box-shadow: 0 0 10px #ffffff, 0 0 20px rgba(200, 230, 255, 0.8);
+  }
+  #live-time-panel.ice-theme .lt-row .lt-label {
+    color: rgba(200, 230, 255, 0.7);
+  }
+  #live-time-panel.ice-theme .lt-row .lt-value {
+    color: #ffffff;
+    text-shadow: 
+      0 0 10px rgba(200, 230, 255, 0.8),
+      0 0 20px rgba(200, 230, 255, 0.5);
+  }
+  #live-time-panel.ice-theme .lt-row.earth .lt-value {
+    color: #ffd780;
+    text-shadow: 0 0 10px rgba(255, 215, 128, 0.8);
+  }
+  #live-time-panel.ice-theme .lt-row.miller .lt-value {
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(200, 230, 255, 0.9);
+  }
+  #live-time-panel.ice-theme .lt-divider {
+    background: linear-gradient(90deg, transparent, rgba(200, 230, 255, 0.4), transparent);
+  }
+  #live-time-panel.ice-theme .lt-diff {
+    background: rgba(200, 230, 255, 0.1);
+    border-color: rgba(200, 230, 255, 0.4);
+  }
+  #live-time-panel.ice-theme .lt-diff .lt-label {
+    color: rgba(200, 230, 255, 0.8);
+  }
+  #live-time-panel.ice-theme .lt-diff .lt-value {
+    color: #e8f4ff;
+    text-shadow: 0 0 15px rgba(200, 230, 255, 0.9);
+  }
+    /* 🎯 ستايل افتراضي (ميلر) */
+  #player-pos-display {
+    position: fixed;
+    top: 75px;
+    left: 24px;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.85);
+    color: #00d2ff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 13px;
+    border: 1px solid rgba(0, 210, 255, 0.4);
+    display: none;
+    pointer-events: none;
+    transition: all 0.6s ease;
+  }
+
+  /* ❄️ ستايل جليدي (مان) — نفس ستايل عداد Live Time */
+  #player-pos-display.ice-theme {
+    background: linear-gradient(135deg, rgba(220, 240, 255, 0.15), rgba(180, 220, 255, 0.1));
+    color: #ffffff;
+    border: 1px solid rgba(200, 230, 255, 0.5);
+    box-shadow: 
+      0 0 30px rgba(200, 230, 255, 0.4),
+      inset 0 0 20px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    text-shadow: 
+      0 0 10px rgba(200, 230, 255, 0.8),
+      0 0 20px rgba(200, 230, 255, 0.5);
+  }
+    /* ⭐ عداد النجوم — أعلى يسار */
+  #stars-hud {
+    position: fixed;
+    top: 90px;
+    left: 24px;
+    z-index: 25;
+    width: 240px;
+    background: linear-gradient(135deg, rgba(5, 15, 30, 0.92), rgba(0, 5, 20, 0.92));
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-family: 'Courier New', monospace;
+    color: #ffd700;
+    box-shadow: 
+      0 0 30px rgba(255, 215, 0, 0.2),
+      inset 0 0 20px rgba(255, 215, 0, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.6s ease;
+    overflow: hidden;
+  }
+  #stars-hud.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #stars-hud::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    animation: scanLineStars 3s linear infinite;
+  }
+  @keyframes scanLineStars {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .stars-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(255, 215, 0, 0.7);
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    margin-bottom: 10px;
+  }
+  .stars-dot {
+    width: 6px; height: 6px;
+    background: #ffd700;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ffd700;
+    animation: pulseDot 1.5s infinite;
+  }
+  .stars-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .stars-icon {
+    font-size: 24px;
+    filter: drop-shadow(0 0 8px #ffd700);
+  }
+  .stars-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+  }
+  #stars-collected {
+    color: #ffffff;
+    text-shadow: 0 0 20px #ffd700;
+  }
+  .stars-progress {
+    height: 6px;
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .stars-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd700, #ffaa00);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  }
+  .stars-text {
+    font-size: 9px;
+    color: rgba(255, 215, 0, 0.5);
+    text-align: center;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ❄️ نسخة جليدية للنجوم (مان) */
+  #stars-hud.ice-theme {
+    background: linear-gradient(135deg, rgba(220, 240, 255, 0.15), rgba(180, 220, 255, 0.1));
+    border: 1px solid rgba(200, 230, 255, 0.5);
+    box-shadow: 
+      0 0 40px rgba(200, 230, 255, 0.4),
+      inset 0 0 30px rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+  #stars-hud.ice-theme .stars-header {
+    color: rgba(220, 240, 255, 0.9);
+    border-bottom-color: rgba(200, 230, 255, 0.3);
+  }
+  #stars-hud.ice-theme .stars-dot {
+    background: #ffffff;
+    box-shadow: 0 0 10px #ffffff, 0 0 20px rgba(200, 230, 255, 0.8);
+  }
+  #stars-hud.ice-theme .stars-value {
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(200, 230, 255, 0.9);
+  }
+  #stars-hud.ice-theme #stars-collected {
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(200, 230, 255, 1);
+  }
+  #stars-hud.ice-theme .stars-progress {
+    background: rgba(200, 230, 255, 0.2);
+  }
+  #stars-hud.ice-theme .stars-progress-fill {
+    background: linear-gradient(90deg, #ffffff, #a0e0ff);
+    box-shadow: 0 0 10px rgba(200, 230, 255, 0.9);
+  }
+  #stars-hud.ice-theme .stars-text {
+    color: rgba(200, 230, 255, 0.7);
+  }
+
+  @media (max-width: 768px) {
+    #stars-hud {
+      top: 70px;
+      left: 12px;
+      width: 200px;
+      padding: 10px 12px;
+    }
+    .stars-value { font-size: 18px; }
+    .stars-icon { font-size: 20px; }
+  }
+    /* 🗺️ خريطة مصغرة */
+  #minimap-hud {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 25;
+    width: 220px;
+    background: linear-gradient(135deg, rgba(5, 15, 30, 0.92), rgba(0, 5, 20, 0.92));
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 14px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    color: #00d2ff;
+    box-shadow: 
+      0 0 30px rgba(0, 210, 255, 0.15),
+      inset 0 0 20px rgba(0, 210, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.6s ease;
+  }
+  #minimap-hud.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #minimap-hud::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00d2ff, transparent);
+    animation: scanLineMap 3s linear infinite;
+    border-radius: 14px 14px 0 0;
+  }
+  @keyframes scanLineMap {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .minimap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0, 210, 255, 0.6);
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 210, 255, 0.15);
+    margin-bottom: 10px;
+  }
+  .minimap-dot {
+    width: 6px; height: 6px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #00ff88;
+    animation: pulseDot 1.5s infinite;
+  }
+  .minimap-canvas-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.08), rgba(0, 0, 0, 0.6));
+    border-radius: 50%;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    overflow: hidden;
+  }
+  #minimap-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .minimap-crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(0, 210, 255, 0.4);
+    font-size: 16px;
+    font-family: monospace;
+    pointer-events: none;
+    font-weight: bold;
+  }
+  .minimap-player {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    pointer-events: none;
+    filter: drop-shadow(0 0 5px #00d2ff);
+    z-index: 2;
+  }
+  .minimap-compass {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    font-size: 10px;
+    color: rgba(0, 210, 255, 0.7);
+    font-family: monospace;
+    font-weight: bold;
+  }
+  .compass-n {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ff4466;
+  }
+  .compass-s {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .compass-e {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .compass-w {
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* ❄️ نسخة جليدية للخريطة */
+  #minimap-hud.ice-theme {
+    background: linear-gradient(135deg, rgba(220, 240, 255, 0.15), rgba(180, 220, 255, 0.1));
+    border: 1px solid rgba(200, 230, 255, 0.5);
+    color: #ffffff;
+  }
+  #minimap-hud.ice-theme::before {
+    background: linear-gradient(90deg, transparent, #ffffff, transparent);
+  }
+  #minimap-hud.ice-theme .minimap-header {
+    color: rgba(220, 240, 255, 0.9);
+    border-bottom-color: rgba(200, 230, 255, 0.3);
+  }
+  #minimap-hud.ice-theme .minimap-canvas-wrapper {
+    background: radial-gradient(circle, rgba(200, 230, 255, 0.1), rgba(0, 0, 0, 0.6));
+    border-color: rgba(200, 230, 255, 0.5);
+  }
+  #minimap-hud.ice-theme .compass-n {
+    color: #ffd780;
+  }
+
+  @media (max-width: 768px) {
+    #minimap-hud {
+      bottom: 12px;
+      left: 12px;
+      width: 160px;
+      padding: 8px;
+    }
+  }
+    /* 👹 WARN Monster */
+  #monster-warn {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    z-index: 90;
+    background: rgba(20, 0, 0, 0.95);
+    border: 3px solid #ff0000;
+    border-radius: 24px;
+    padding: 32px 48px;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+      0 0 60px rgba(255, 0, 0, 0.8),
+      inset 0 0 40px rgba(255, 0, 0, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: warnPulse 1s infinite;
+  }
+  #monster-warn.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  @keyframes warnPulse {
+    0%, 100% { 
+      box-shadow: 0 0 60px rgba(255, 0, 0, 0.8), inset 0 0 40px rgba(255, 0, 0, 0.2);
+    }
+    50% { 
+      box-shadow: 0 0 100px rgba(255, 0, 0, 1), inset 0 0 60px rgba(255, 0, 0, 0.4);
+    }
+  }
+  .warn-icon {
+    font-size: 60px;
+    margin-bottom: 12px;
+    animation: warnIconShake 0.5s infinite;
+  }
+  @keyframes warnIconShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px) rotate(-5deg); }
+    75% { transform: translateX(5px) rotate(5deg); }
+  }
+  .warn-text {
+    color: #ff6666;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-family: 'Tajawal', sans-serif;
+  }
+  .warn-countdown {
+    color: #ffffff;
+    font-size: 72px;
+    font-weight: 900;
+    font-family: 'Courier New', monospace;
+    text-shadow: 
+      0 0 30px #ff0000,
+      0 0 60px #ff0000;
+    margin: 8px 0;
+    animation: countdownPulse 1s infinite;
+  }
+  @keyframes countdownPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+    /* 💜 نسخة بنفسجية فخمة — كوكب ادموندز */
+  #live-time-panel.purple-theme {
+    background: linear-gradient(135deg, rgba(40, 10, 70, 0.85), rgba(20, 5, 40, 0.9));
+    border: 1px solid rgba(199, 125, 255, 0.6);
+    box-shadow: 
+      0 0 40px rgba(157, 78, 221, 0.6),
+      0 0 80px rgba(157, 78, 221, 0.3),
+      inset 0 0 30px rgba(199, 125, 255, 0.15);
+    backdrop-filter: blur(25px) saturate(1.6);
+    -webkit-backdrop-filter: blur(25px) saturate(1.6);
+    position: relative;
+  }
+  #live-time-panel.purple-theme::before {
+    background: linear-gradient(90deg, transparent, #c77dff, #ec4899, #c77dff, transparent);
+    height: 2px;
+    box-shadow: 
+      0 0 20px rgba(199, 125, 255, 1),
+      0 0 40px rgba(199, 125, 255, 0.6);
+    animation: premiumScan 4s linear infinite;
+  }
+  @keyframes premiumScan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  #live-time-panel.purple-theme::after {
+    border-top-color: rgba(199, 125, 255, 0.9);
+    border-left-color: rgba(199, 125, 255, 0.9);
+    box-shadow: -2px -2px 10px rgba(199, 125, 255, 0.5);
+  }
+  #live-time-panel.purple-theme .lt-header {
+    color: rgba(199, 125, 255, 0.95);
+    border-bottom-color: rgba(199, 125, 255, 0.35);
+    text-shadow: 0 0 15px rgba(199, 125, 255, 0.6);
+  }
+  #live-time-panel.purple-theme .lt-header-dot {
+    background: #ec4899;
+    box-shadow: 
+      0 0 12px #ec4899,
+      0 0 24px rgba(236, 72, 153, 0.8);
+    animation: pulseDot 1.5s infinite;
+  }
+  #live-time-panel.purple-theme .lt-row .lt-label {
+    color: rgba(199, 125, 255, 0.75);
+  }
+  #live-time-panel.purple-theme .lt-row .lt-value {
+    color: #c77dff;
+    text-shadow: 
+      0 0 12px rgba(199, 125, 255, 1),
+      0 0 24px rgba(199, 125, 255, 0.6);
+    font-weight: bold;
+  }
+  #live-time-panel.purple-theme .lt-row.earth .lt-value {
+    color: #ffd780;
+    text-shadow: 
+      0 0 12px rgba(255, 215, 128, 0.9),
+      0 0 24px rgba(255, 215, 128, 0.5);
+  }
+  #live-time-panel.purple-theme .lt-row.miller .lt-value {
+    color: #ec4899;
+    text-shadow: 
+      0 0 15px rgba(236, 72, 153, 1),
+      0 0 30px rgba(236, 72, 153, 0.6);
+  }
+  #live-time-panel.purple-theme .lt-divider {
+    background: linear-gradient(90deg, transparent, rgba(199, 125, 255, 0.5), transparent);
+    height: 1px;
+  }
+  #live-time-panel.purple-theme .lt-diff {
+    background: rgba(157, 78, 221, 0.15);
+    border-color: rgba(199, 125, 255, 0.5);
+    box-shadow: 
+      0 0 20px rgba(157, 78, 221, 0.3),
+      inset 0 0 15px rgba(199, 125, 255, 0.1);
+  }
+  #live-time-panel.purple-theme .lt-diff .lt-label {
+    color: rgba(199, 125, 255, 0.9);
+  }
+  #live-time-panel.purple-theme .lt-diff .lt-value {
+    color: #ec4899;
+    text-shadow: 
+      0 0 15px rgba(236, 72, 153, 1),
+      0 0 30px rgba(236, 72, 153, 0.7);
+  }
+
+  /* 💜 إحداثيات بنفسجية فخمة */
+  #player-pos-display.purple-theme {
+    background: linear-gradient(135deg, rgba(40, 10, 70, 0.85), rgba(20, 5, 40, 0.9));
+    color: #c77dff;
+    border: 1px solid rgba(199, 125, 255, 0.6);
+    box-shadow: 
+      0 0 30px rgba(157, 78, 221, 0.5),
+      inset 0 0 20px rgba(199, 125, 255, 0.15);
+    backdrop-filter: blur(25px) saturate(1.6);
+    -webkit-backdrop-filter: blur(25px) saturate(1.6);
+    text-shadow: 
+      0 0 12px rgba(199, 125, 255, 1),
+      0 0 24px rgba(199, 125, 255, 0.6);
+  }
+
+  /* 💜 HUD نجوم بنفسجي فخم */
+  #stars-hud.purple-theme {
+    background: linear-gradient(135deg, rgba(40, 10, 70, 0.85), rgba(20, 5, 40, 0.9));
+    border: 1px solid rgba(199, 125, 255, 0.6);
+    box-shadow: 
+      0 0 40px rgba(157, 78, 221, 0.6),
+      0 0 80px rgba(157, 78, 221, 0.3),
+      inset 0 0 30px rgba(199, 125, 255, 0.15);
+    backdrop-filter: blur(25px) saturate(1.6);
+    -webkit-backdrop-filter: blur(25px) saturate(1.6);
+  }
+  #stars-hud.purple-theme::before {
+    background: linear-gradient(90deg, transparent, #c77dff, #ec4899, #c77dff, transparent);
+    box-shadow: 0 0 20px rgba(199, 125, 255, 1);
+    animation: premiumScan 4s linear infinite;
+  }
+  #stars-hud.purple-theme .stars-header {
+    color: rgba(199, 125, 255, 0.95);
+    border-bottom-color: rgba(199, 125, 255, 0.35);
+    text-shadow: 0 0 15px rgba(199, 125, 255, 0.6);
+  }
+  #stars-hud.purple-theme .stars-dot {
+    background: #ec4899;
+    box-shadow: 
+      0 0 12px #ec4899,
+      0 0 24px rgba(236, 72, 153, 0.8);
+  }
+  #stars-hud.purple-theme .stars-value {
+    color: #c77dff;
+    text-shadow: 
+      0 0 15px rgba(199, 125, 255, 1),
+      0 0 30px rgba(199, 125, 255, 0.6);
+  }
+  #stars-hud.purple-theme #stars-collected {
+    color: #ec4899;
+    text-shadow: 
+      0 0 20px rgba(236, 72, 153, 1),
+      0 0 40px rgba(236, 72, 153, 0.7);
+  }
+  #stars-hud.purple-theme .stars-progress {
+    background: rgba(199, 125, 255, 0.2);
+  }
+  #stars-hud.purple-theme .stars-progress-fill {
+    background: linear-gradient(90deg, #9d4edd, #ec4899);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.9);
+  }
+  #stars-hud.purple-theme .stars-text {
+    color: rgba(199, 125, 255, 0.8);
+  }
+
+  /* 💜 خريطة بنفسجية فخمة */
+  #minimap-hud.purple-theme {
+    background: linear-gradient(135deg, rgba(40, 10, 70, 0.85), rgba(20, 5, 40, 0.9));
+    border: 1px solid rgba(199, 125, 255, 0.6);
+    box-shadow: 
+      0 0 40px rgba(157, 78, 221, 0.6),
+      inset 0 0 30px rgba(199, 125, 255, 0.15);
+    backdrop-filter: blur(25px) saturate(1.6);
+    -webkit-backdrop-filter: blur(25px) saturate(1.6);
+    color: #c77dff;
+  }
+  #minimap-hud.purple-theme::before {
+    background: linear-gradient(90deg, transparent, #c77dff, #ec4899, #c77dff, transparent);
+    box-shadow: 0 0 20px rgba(199, 125, 255, 1);
+    animation: premiumScan 4s linear infinite;
+  }
+  #minimap-hud.purple-theme .minimap-header {
+    color: rgba(199, 125, 255, 0.95);
+    border-bottom-color: rgba(199, 125, 255, 0.35);
+    text-shadow: 0 0 15px rgba(199, 125, 255, 0.6);
+  }
+  #minimap-hud.purple-theme .minimap-dot {
+    background: #ec4899;
+    box-shadow: 0 0 12px #ec4899;
+  }
+  #minimap-hud.purple-theme .minimap-canvas-wrapper {
+    background: radial-gradient(circle, rgba(157, 78, 221, 0.15), rgba(20, 5, 40, 0.9));
+    border-color: rgba(199, 125, 255, 0.6);
+    box-shadow: 
+      inset 0 0 30px rgba(199, 125, 255, 0.15),
+      0 0 20px rgba(157, 78, 221, 0.3);
+  }
+  #minimap-hud.purple-theme .compass-n {
+    color: #ec4899;
+  }
+  #minimap-hud.purple-theme .minimap-crosshair {
+    color: rgba(199, 125, 255, 0.6);
+  }
+  #minimap-hud.purple-theme .minimap-player {
+    filter: drop-shadow(0 0 8px #c77dff);
+  }
+  /* ============================================
+   📱 iPhone — الوضع الأفقي
+   ============================================ */
+:root {
+  --sl: env(safe-area-inset-left, 0px);
+  --sr: env(safe-area-inset-right, 0px);
+  --sb: env(safe-area-inset-bottom, 0px);
+}
+html, body { height: 100dvh; }
+* { -webkit-touch-callout: none; }
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+  /* ---------- الفضاء ---------- */
+  #top-controls { top: 8px; left: calc(8px + var(--sl)); right: calc(8px + var(--sr)); }
+  #top-controls .glass { padding: 6px 10px !important; gap: 8px !important; }
+  #top-controls .glass i { font-size: 16px !important; }
+
+  #planet-info {
+    top: 56px; right: calc(8px + var(--sr));
+    width: 220px; padding: 10px; font-size: 11px;
+    max-height: calc(100dvh - 130px); overflow-y: auto;
+  }
+  #planet-info h2 { font-size: 14px !important; margin-bottom: 4px !important; }
+  #planet-info p  { font-size: 11px !important; margin-bottom: 6px !important; }
+
+  #nav-dock { bottom: calc(8px + var(--sb)); padding: 4px; gap: 4px; }
+  .nav-btn  { padding: 6px 10px; font-size: 11px; }
+  #controls-hint { display: none !important; }
+
+  /* ---------- داخل العالم ---------- */
+  #exit-world-btn {
+    top: 8px; left: calc(8px + var(--sl));
+    padding: 6px 12px; font-size: 12px; border-radius: 10px;
+  }
+  #player-pos-display { display: none !important; }  /* أداة تطوير، تقدر تحذفه */
+
+  #live-time-panel {
+    top: 8px; right: calc(8px + var(--sr));
+    width: 170px; padding: 8px 10px;
+  }
+  .lt-header  { font-size: 8px; padding-bottom: 4px; margin-bottom: 4px; }
+  .lt-row     { font-size: 10px; padding: 2px 0; }
+  .lt-row .lt-label { font-size: 8px; }
+  .lt-divider { margin: 3px 0; }
+  .lt-diff    { padding: 4px 6px; margin-top: 4px; }
+  .lt-diff .lt-value { font-size: 10px; }
+
+  #stars-hud {
+    top: 8px; left: calc(140px + var(--sl));
+    width: 150px; padding: 6px 10px;
+  }
+  .stars-header, .stars-text { display: none; }
+  .stars-counter  { padding: 0; gap: 6px; }
+  .stars-icon     { font-size: 16px; }
+  .stars-value    { font-size: 15px; }
+  .stars-progress { margin: 4px 0 0; }
+
+  #minimap-hud {
+    top: 52px; bottom: auto; left: calc(8px + var(--sl));
+    width: 110px; padding: 6px;
+  }
+  .minimap-header { display: none; }
+
+  /* ---------- الجويستيك والأزرار ---------- */
+  #joystick      { width: 110px; height: 110px; }
+  #joystick-knob { width: 50px;  height: 50px; }
+
+  #action-buttons {
+    right: calc(14px + var(--sr)); bottom: calc(14px + var(--sb)); gap: 10px;
+  }
+  .tps-btn  { width: 54px; height: 54px; font-size: 20px; }
+  #jump-btn { width: 68px; height: 68px; font-size: 24px; }
+
+  /* ---------- النوافذ والفيديو ---------- */
+  [id$="-modal"] > div {
+    max-height: 92dvh; overflow-y: auto; padding: 16px !important;
+  }
+  [id$="-modal"] h2 { font-size: 20px !important; margin-bottom: 8px !important; }
+  [id$="-modal"] p  { font-size: 13px !important; margin-bottom: 10px !important; }
+  #video-modal video, #monster-video-modal video {
+    max-height: 78dvh !important; object-fit: contain;
+  }
+  #video-modal button { top: 6px !important; right: 6px !important; }
+
+  #monster-warn   { padding: 14px 28px; }
+  .warn-icon      { font-size: 34px; margin-bottom: 4px; }
+  .warn-countdown { font-size: 48px; }
+}
 </style>
 </head>
 <body>
@@ -489,8 +1235,42 @@
   <i class="fa-solid fa-arrow-right"></i> عودة للفضاء
 </button>
 
-<div id="player-pos-display" style="position: fixed; top: 75px; left: 24px; z-index: 50; background: rgba(0, 0, 0, 0.85); color: #00d2ff; padding: 8px 14px; border-radius: 8px; font-family: monospace; font-size: 13px; border: 1px solid rgba(0, 210, 255, 0.4); display: none; pointer-events: none;">
-  📍 Pos: X: 0.00 | Y: 0.00 | Z: 0.00
+<div id="player-pos-display">
+    📍 Pos: X: 0.00 | Y: 0.00 | Z: 0.00
+</div>
+<!-- ⭐ عداد النجوم -->
+<div id="stars-hud">
+  <div class="stars-header">
+    <span>★ MISSION</span>
+    <div class="stars-dot"></div>
+  </div>
+  <div class="stars-counter">
+    <span class="stars-icon">⭐</span>
+    <span class="stars-value"><span id="stars-collected">0</span> / <span id="stars-total">20</span></span>
+  </div>
+  <div class="stars-progress">
+    <div class="stars-progress-fill" id="stars-progress-fill"></div>
+  </div>
+  <div class="stars-text">اجمع النجوم المنتشرة في العالم</div>
+</div>
+
+<!-- 🗺️ خريطة مصغرة -->
+<div id="minimap-hud">
+  <div class="minimap-header">
+    <span>◈ MAP</span>
+    <div class="minimap-dot"></div>
+  </div>
+  <div class="minimap-canvas-wrapper">
+    <canvas id="minimap-canvas" width="200" height="200"></canvas>
+    <div class="minimap-crosshair">+</div>
+    <div class="minimap-player">🧍</div>
+  </div>
+  <div class="minimap-compass">
+    <span class="compass-n">N</span>
+    <span class="compass-e">E</span>
+    <span class="compass-s">S</span>
+    <span class="compass-w">W</span>
+  </div>
 </div>
 <!-- ⏱️ عداد Live Time -->
 <div id="live-time-panel">
@@ -599,7 +1379,27 @@
     </button>
   </div>
 </div>
+<!-- 👹 WARN Monster -->
+<div id="monster-warn">
+  <div class="warn-icon">⚠️</div>
+  <div class="warn-text">الوحش قادم بعد</div>
+  <div class="warn-countdown" id="warn-countdown">10</div>
+  <div class="warn-text">ثواني</div>
+</div>
 
+<!-- 👹 Monster Video Modal -->
+<div id="monster-video-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100; align-items: center; justify-content: center; padding: 20px; flex-direction: column;">
+  <div style="width: 100%; max-width: 900px; position: relative;">
+    <video 
+      id="monster-video-player" 
+      src="videos/monster.mp4" 
+      controls 
+      playsinline
+      style="width: 100%; height: auto; border-radius: 16px; border: 2px solid rgba(255,0,0,0.8); box-shadow: 0 0 80px rgba(255,0,0,0.6);"
+      onended="closeMonsterVideo()"
+    ></video>
+  </div>
+</div>
 <div id="world-hint"></div>
 
 <div id="message-modal">
@@ -678,7 +1478,34 @@
     </button>
   </div>
 </div>
-
+<!-- 🖼️ Photo Mission Modal -->
+<div id="photo-mission-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 85; align-items: center; justify-content: center; padding: 20px;">
+  <div style="max-width: 700px; width: 100%; padding: 24px; text-align: center; border: 2px solid rgba(255,133,235,0.6); border-radius: 24px; background: linear-gradient(135deg, rgba(60,15,55,0.95), rgba(30,8,28,0.95)); box-shadow: 0 0 80px rgba(255,133,235,0.5);">
+    
+    <div style="font-size: 44px; margin-bottom: 8px;">💌</div>
+    <h2 style="font-family: 'Amiri', serif; font-size: 26px; margin: 0 0 16px 0; color: #FF85EB; text-shadow: 0 0 20px rgba(255,133,235,0.8);">
+      رسالة خاصة لكِ يا فرح
+    </h2>
+    
+    <div style="border-radius: 16px; overflow: hidden; border: 2px solid rgba(255,133,235,0.4); box-shadow: 0 0 40px rgba(255,133,235,0.3); margin-bottom: 20px;">
+      <img 
+        id="photo-mission-image" 
+        src="images/photo.png" 
+        alt="رسالة" 
+        style="width: 100%; height: auto; display: block;"
+      >
+    </div>
+    
+    <button 
+      onclick="closePhotoMission()" 
+      style="padding: 14px 48px; border-radius: 50px; background: linear-gradient(90deg, #FF85EB, #F062D9); color: #000; border: none; cursor: pointer; font-weight: bold; font-size: 16px; box-shadow: 0 0 30px rgba(255,133,235,0.6); transition: transform 0.2s;"
+      onmouseover="this.style.transform='scale(1.05)'"
+      onmouseout="this.style.transform='scale(1)'"
+    >
+      تم ✨
+    </button>
+  </div>
+</div>
 <!-- Tesseract Modal -->
 <div id="tesseract" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 50; align-items: center; justify-content: center; padding: 20px;">
   <div class="glass" style="max-width: 600px; width: 100%; padding: 32px; text-align: center; border-color: rgba(157,78,221,0.5);">
@@ -706,11 +1533,24 @@ import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 const PLANETS = [
   { id: 'miller', name: 'كوكب ميلر', color: 0x00d2ff, colorHex: '#00d2ff',
     url: 'models/miller.glb',
+    requiresCode: true, code: 'FARAH-5D', codeVerified: false,
     pos: { x: -80, y: -20, z: -60 },
     dilation: 7*365*24, dilationText: '1س = 7 سنوات',
     desc: 'كوكب المحيط. أمواج عملاقة بفعل جاذبية الثقب الأسود.',
     unlocked: true, completed: false, mission: 'wave',
-    hasWorld: true },
+    hasWorld: true,
+    worldUrl: 'models/world.glb',
+    worldTargetSize: 300,
+    worldPosition: { x: 0, y: 0, z: 0 },
+    worldRotation: { x: 0, y: 0, z: 0 },
+    worldBackground: 0x001a33,
+    worldFogColor: 0x005c97,
+    worldFogDensity: 0.015,
+    worldAmbient: 0x88bbff,
+    worldAmbientIntensity: 0.7,
+    worldSunColor: 0xffffff,
+    worldSunIntensity: 1.5,
+    iceTheme: false },
 
   { id: 'mann', name: 'كوكب مان', color: 0x00f2fe, colorHex: '#00f2fe',
     url: 'models/mann.glb',
@@ -718,15 +1558,41 @@ const PLANETS = [
     dilation: 1.5, dilationText: '1س = 1.5س',
     desc: 'كوكب الجليد المتجمد.',
     unlocked: false, completed: false, mission: 'code',
-    hasWorld: false },
+    hasWorld: true,
+    worldUrl: 'models/world2.glb',
+    worldTargetSize: 300,
+    worldPosition: { x: 0, y: 0, z: 0 },
+    worldRotation: { x: 0, y: 0, z: 0 },
+    worldBackground: 0xd0e8f5,
+    worldFogColor: 0xd0e8f5,
+    worldFogDensity: 0.025,
+    worldAmbient: 0xffffff,
+    worldAmbientIntensity: 1.2,
+    worldSunColor: 0xffffee,
+    worldSunIntensity: 1.8,
+    iceTheme: true },
 
-  { id: 'edmunds', name: 'كوكب ادموندز', color: 0xffb347, colorHex: '#ffb347',
+      { id: 'edmunds', name: 'كوكب ادموندز', color: 0x9d4edd, colorHex: '#c77dff',
     url: 'models/edmunds.glb',
     pos: { x: 100, y: 40, z: -30 },
     dilation: 1.0, dilationText: '1س = 1س',
     desc: 'الملاذ الأخير.',
     unlocked: false, completed: false, mission: 'stars',
-    hasWorld: false },
+    hasWorld: true,
+    worldUrl: 'models/world3.glb',
+    worldTargetSize: 300,
+    worldPosition: { x: 0, y: 0, z: 0 },
+    worldRotation: { x: 0, y: 0, z: 0 },
+    worldBackground: 0x001a33,         // ← نفس ميلر (عادي)
+    worldFogColor: 0x005c97,           // ← نفس ميلر
+    worldFogDensity: 0.015,
+    worldAmbient: 0x88bbff,            // ← نفس ميلر
+    worldAmbientIntensity: 0.7,
+    worldSunColor: 0xffffff,           // ← نفس ميلر
+    worldSunIntensity: 1.5,
+    iceTheme: false,
+    goldTheme: false,
+    purpleTheme: true },               // ← 🆕 فعّل الثيم البنفسجيايل بنفسجي
 
   { id: 'gargantua', name: 'جارجانتوا', color: 0x9d4edd, colorHex: '#9d4edd',
     url: 'models/gargantua.glb',
@@ -740,7 +1606,13 @@ const PLANETS = [
 const SHIP_CONFIG = {
   modelUrl: 'models/ship.glb',
   scale: 1,
-  startAtPlanetIdx: 0
+  startAtPlanetIdx: 0,
+  // 🚀 إعدادات طيّارة الكوكب (داخل العالم)
+  planetShip: {
+    position: { x: 0, y: 0, z: 0 },   // مكان الرسبون
+    scale: 1,
+    interactDistance: 8
+  }
 };
 
 // ==========================================
@@ -754,7 +1626,15 @@ const CHARACTER_CONFIG = {
     run:  'models/character-run.fbx',
     jump: 'models/character-jump.fbx'
   },
-  height: 1.0
+  height: 1.0,   // ← الافتراضي لباقي العوالم
+  
+  // 🎯 أحجام خاصة لكل عالم
+  heightPerPlanet: {
+    miller: 1.0,       // عالم ميلر — طبيعي
+    mann: 1.0,         // عالم مان — طبيعي
+    edmunds: 0.5,      // 🌸 ادموندز — نص الحجم (غيّر الرقم زي ما تبغى)
+    gargantua: 1.0
+  }
 };
 
 const WORLD_CONFIG = {
@@ -776,7 +1656,7 @@ const SKIN_CONFIG = {
   interactDistance: 8,
 
   // الرمز اللي يعطيه الميني جيم
-  rewardCode: 'FARAH-5D',
+  rewardCode: 'FARAH-5D', 
 
   // حالة
   completed: false,
@@ -793,6 +1673,46 @@ const VIDEO_OBJECT_CONFIG = {
   object: null,
   viewed: false
 };
+// 👹 إعدادات الوحش
+const MONSTER_CONFIG = {
+  modelUrl: 'models/monster.glb',
+  videoUrl: 'videos/monster.mp4',
+  scale: 1,
+  spawnDistance: 60,
+  speed: 8,
+  catchDistance: 2.5,
+  warnDuration: 10,
+  warnDelay: 2000,
+  object: null,
+  active: false,
+  caught: false,
+  spawnTime: 0,
+  lastUpdate: 0
+};
+
+// 🖼️ إعدادات مهمة الصورة السرية (كوكب ادموندز)
+const PHOTO_MISSION_CONFIG = {
+  url: 'models/photo-object.glb',        // ← اسم ملف الأوبجكت GLB
+  scale: 0.05,
+  position: { x: -6.34, y: -1.43, z: -132.45 },  // ← الإحداثي من الصورة
+  rotation: { x: 0, y: 0, z: 0 },
+  interactDistance: 6,
+  imageUrl: 'images/photo.png',          // ← اسم صورة PNG
+  object: null,
+  completed: false
+};
+// ⭐ إعدادات مهمة النجوم
+const STARS_CONFIG = {
+  url: 'models/star.glb',        // 🆕 ملف النجمة
+  total: 20,
+  spawnRadius: 100,
+  starScale: 1.5,
+  collectDistance: 3,
+  stars: [],
+  collected: 0,
+  completed: false,
+  onlyFor: ['mann']              // 🆕 الكوكب الوحيد اللي فيه المهمة
+};
 const MILLER_MESSAGE = {
   position: { x: 14.34, y: -18.46, z: -21.24 },
   title: 'رسالة من قلب المحيط',
@@ -802,24 +1722,40 @@ const MILLER_MESSAGE = {
 // 🎵 إعدادات الصوت
 // ==========================================
 const AUDIO_CONFIG = {
-  // صوت الخلفية
-  ambient: {
-    url: 'audio/ambient.mp3',
-    volume: 0.3,          // خفيف (0-1)
+  // صوت الفضاء (قائمة الكواكب) ← 🆕
+  spaceAmbient: {
+    url: 'audio/space-ambient.mp3',   // ← أو ambient.mp3 إذا ما عندك ملف ثاني
+    volume: 0.2,
     loop: true,
-    audio: null,          // HTMLAudioElement
+    audio: null,
+    enabled: false
+  },
+  
+    // 🎵 أصوات الخلفية لكل كوكب
+  ambientUrls: {
+    miller: 'audio/ambient.mp3',           // ميلر (رملي)
+    mann: 'audio/ambient-mann.mp3',        // مان (جليدي) 🆕
+    edmunds: 'audio/ambient.mp3',          // ادموندز (نفس ميلر)
+    gargantua: 'audio/ambient.mp3'         // جارجانتوا (نفس ميلر)
+  },
+  
+  // الصوت الحالي
+  ambient: {
+    url: 'audio/ambient.mp3',              // افتراضي
+    volume: 0.3,
+    loop: true,
+    audio: null,
     enabled: false
   },
   
   // صوت المشي
   footstep: {
     url: 'audio/footstep.mp3',
-    volume: 0.1,          // متوسط
+    volume: 0.1,
     audio: null,
     enabled: true,
-    // كل كم ثانية يلعب صوت خطوة
-    walkInterval: 0.5,    // مشي: كل 0.5 ثانية
-    runInterval: 0.3      // جري: كل 0.3 ثانية
+    walkInterval: 0.5,
+    runInterval: 0.3
   },
   
   // حالة الصوت العام
@@ -856,7 +1792,7 @@ let playerAction = null;
 let playerAnimationClips = {};
 let playerOnGround = true;
 let playerVelocityY = 0;
-const PLAYER_SPEED = 10;
+const PLAYER_SPEED = 3;
 const PLAYER_RUN_SPEED = 6;
 const PLAYER_JUMP = 8;
 const GRAVITY = 20;
@@ -868,13 +1804,29 @@ const downVector = new THREE.Vector3(0, -1, 0);
 
 let cameraYaw = 0;
 let cameraPitch = 0.3;
+
+// 🎥 إعدادات الكاميرا الافتراضية (باقي العوالم)
 const CAMERA_DISTANCE = 1.7;
 const CAMERA_HEIGHT = .7;
 
+// 🎥 إعدادات خاصة لكل عالم (تتطبق عند دخوله)
+const CAMERA_PER_PLANET = {
+  miller:    { distance: 1.7, height: 0.7 },
+  mann:      { distance: 1.7, height: 0.7 },
+  edmunds:   { distance: 0.6, height: 0.4 },   // 🌸 ادموندز — كاميرا أبعد/أعلى
+  gargantua: { distance: 1.7, height: 0.7 }
+};
+
+// 🎯 القيم الحالية (تتغير حسب الكوكب)
+let currentCameraDistance = CAMERA_DISTANCE;
+let currentCameraHeight = CAMERA_HEIGHT;
 let joystickActive = false;
 let joystickCenter = { x: 0, y: 0 };
 let joystickValue = { x: 0, y: 0 };
 let isRunning = false;
+let joyTouchId = null;   // رقم إصبع الجويستيك
+let runBtnHeld = false;  // هل زر الجري مضغوط
+let joyRun = false;      // هل الجويستيك بأقصى مسافة
 let isJumpBtnPressed = false;
 // ⏱️ عداد Live Time
 let missionStartTime = 0;
@@ -932,8 +1884,19 @@ function init() {
   createPlanets();
   createShip();
 
-  setupMobileControls();
- initAudio();
+setupMobileControls();
+initAudio();
+loadProgress();
+initMinimap();   // 🗺️
+  
+  // 🆕 شغّل صوت الفضاء بعد أول كليك
+  document.addEventListener('click', function startSpaceAudio() {
+    if (currentMode === 'space') {
+      playSpaceAmbient();
+    }
+    document.removeEventListener('click', startSpaceAudio);
+  }, { once: true });
+  
   addEventListener('resize', onResize);
   addEventListener('keydown', e => onKey(e, true));
   addEventListener('keyup', e => onKey(e, false));
@@ -954,6 +1917,9 @@ function resetMovementInputs() {
   joystickValue.y = 0;
   isRunning = false;
   isJumpBtnPressed = false;
+  joyTouchId = null;
+  runBtnHeld = false;
+  joyRun = false;
 }
 
 function createStars() {
@@ -1357,13 +2323,34 @@ function updateUI() {
     statusEl.style.color = '#f87171';
   }
 
-  const mb = document.getElementById('mission-box');
-  if (p.completed) {
-    mb.innerHTML = '<div style="text-align: center; color: #4ade80; font-weight: bold;">✅ تم اجتياز المهمة</div>';
-  } else if (p.unlocked && p.hasWorld) {
-    mb.innerHTML = '<button id="enter-planet-btn" onclick="enterPlanetWorld()">🚀 دخول الكوكب</button>';
+      const mb = document.getElementById('mission-box');
+  
+  if (p.unlocked && p.hasWorld) {
+    // 🎯 الكوكب فيه عالم
+    let html = '';
+    
+    // 🔒 إذا يحتاج رمز ولم يُدخل
+    if (p.requiresCode && !p.codeVerified) {
+      html += '<button id="enter-planet-btn" onclick="openMillerCodeModal()">🔒 أدخل الرمز للدخول</button>';
+    } else {
+      // 🚀 زر دخول الكوكب
+      html += '<button id="enter-planet-btn" onclick="enterPlanetWorld()">🚀 دخول الكوكب</button>';
+    }
+    
+    // ✅ حالة المهمة (منفصلة عن زر الدخول)
+    if (p.completed) {
+      html += '<div style="text-align: center; color: #4ade80; font-weight: bold; margin-top: 8px; font-size: 11px;">✅ تم اجتياز المهمة</div>';
+    }
+    
+    mb.innerHTML = html;
+    
   } else if (p.unlocked) {
-    mb.innerHTML = '<button onclick="startMission()" style="width: 100%; padding: 8px; border-radius: 8px; background: ' + p.colorHex + '; color: #000; font-weight: bold; cursor: pointer; border: none;">ابدأ المهمة</button>';
+    // كوكب بدون عالم — مهمة فقط
+    if (p.completed) {
+      mb.innerHTML = '<div style="text-align: center; color: #4ade80; font-weight: bold;">✅ تم اجتياز المهمة</div>';
+    } else {
+      mb.innerHTML = '<button onclick="startMission()" style="width: 100%; padding: 8px; border-radius: 8px; background: ' + p.colorHex + '; color: #000; font-weight: bold; cursor: pointer; border: none;">ابدأ المهمة</button>';
+    }
   } else {
     mb.innerHTML = '<div style="text-align: center; color: #64748b; font-size: 11px;">🔒 أكمل المهمة السابقة</div>';
   }
@@ -1380,8 +2367,71 @@ function updateUI() {
   });
 
   document.getElementById('main-icon').style.color = p.colorHex;
+}function saveProgress() {
+  const progress = {
+    millerCodeVerified: PLANETS[0].codeVerified,
+    planetsUnlocked: PLANETS.map(p => p.unlocked),
+    planetsCompleted: PLANETS.map(p => p.completed),
+    skinCompleted: SKIN_CONFIG.completed,
+    videoViewed: VIDEO_OBJECT_CONFIG.viewed,
+    photoMissionCompleted: PHOTO_MISSION_CONFIG.completed   // 🖼️ جديد
+  };
+  localStorage.setItem('farahProgress', JSON.stringify(progress));
 }
 
+function loadProgress() {
+  const saved = localStorage.getItem('farahProgress');
+  if (!saved) return;
+  
+  try {
+    const progress = JSON.parse(saved);
+    if (progress.millerCodeVerified) PLANETS[0].codeVerified = true;
+    if (progress.planetsUnlocked) {
+      progress.planetsUnlocked.forEach((unlocked, i) => {
+        if (PLANETS[i]) PLANETS[i].unlocked = unlocked;
+      });
+    }
+    if (progress.planetsCompleted) {
+      progress.planetsCompleted.forEach((completed, i) => {
+        if (PLANETS[i]) PLANETS[i].completed = completed;
+      });
+    }
+    if (progress.skinCompleted) SKIN_CONFIG.completed = true;
+    if (progress.videoViewed) VIDEO_OBJECT_CONFIG.viewed = true;
+  } catch (e) {
+    console.warn('فشل تحميل التقدم:', e);
+  }
+}
+window.openMillerCodeModal = function () {
+  document.getElementById('miller-code-modal').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('miller-code-input').focus();
+  }, 100);
+};
+
+window.closeMillerCodeModal = function () {
+  document.getElementById('miller-code-modal').style.display = 'none';
+  document.getElementById('miller-code-input').value = '';
+};
+
+window.verifyMillerCode = function () {
+  const input = document.getElementById('miller-code-input').value.trim().toUpperCase();
+  const p = PLANETS[currentIdx];
+  
+  if (input === p.code) {
+    // ✅ الرمز صحيح
+   p.codeVerified = true;
+saveProgress();
+closeMillerCodeModal();
+    
+    // ادخل الكوكب مباشرة
+    setTimeout(() => {
+      enterPlanetWorld();
+    }, 300);
+  } else {
+    alert('❌ الرمز غير صحيح!');
+  }
+};
 setInterval(() => {
   if (currentMode !== 'space') return;
   const p = PLANETS[currentIdx];
@@ -1438,8 +2488,12 @@ function animate() {
     updateTPSCamera(dt);
     updateInteraction();
     updateSkinTrigger();
+    checkStarCollection();   // ⭐ جديد — فحص جمع النجوم
+    animateStars(dt);        // ⭐ جديد — تحريك النجوم
     updateVideoTrigger();   // ← جديد
-
+    drawMinimap();           // 🗺️ ارسم الخريطة
+    updateMonster(dt);       // 👹 تحديث الوحش
+    updatePhotoTrigger();   // 🖼️ مهمة الصورة
     if (playerGroup) {
       const { x, y, z } = playerGroup.position;
       const posEl = document.getElementById('player-pos-display');
@@ -1464,8 +2518,25 @@ function onResize() {
 window.enterPlanetWorld = function () {
   const p = PLANETS[currentIdx];
   if (!p.hasWorld) return;
-  document.getElementById('player-pos-display').style.display = 'block';
-  document.getElementById('planet-info').style.display = 'none';
+  
+  // 🎵 أوقف صوت الفضاء فوراً
+  stopSpaceAmbient();
+  
+  // 🎯 عرض الإحداثيات مع ستايل الكوكب
+  const posDisplay = document.getElementById('player-pos-display');
+  posDisplay.style.display = 'block';
+  
+  // ❄️ تبديل الستايل حسب الكوكب
+    // 🎨 تبديل الستايل حسب الكوكب
+  posDisplay.classList.remove('ice-theme', 'gold-theme', 'purple-theme');
+  
+  if (p.iceTheme) {
+    posDisplay.classList.add('ice-theme');
+  } else if (p.goldTheme) {
+    posDisplay.classList.add('gold-theme');
+  } else if (p.purpleTheme) {
+    posDisplay.classList.add('purple-theme');
+  }  document.getElementById('planet-info').style.display = 'none';
   document.getElementById('nav-dock').style.display = 'none';
   document.getElementById('top-controls').style.display = 'none';
   document.getElementById('controls-hint').style.display = 'none';
@@ -1486,14 +2557,43 @@ window.enterPlanetWorld = function () {
 
     currentMode = 'planet';
 controls.enabled = false;
-
+applyCameraSettings();   // 🎥 طبّق إعدادات الكاميرا
     // ⏱️ ابدأ عداد Live Time
     startLiveTimeCounter();
+           // ⭐ اعرض HUD النجوم — فقط في مان
+        // ⭐ اعرض HUD النجوم — فقط في مان
+        if (STARS_CONFIG.onlyFor.includes(p.id)) {
+      const hud = document.getElementById('stars-hud');
+      hud.classList.remove('ice-theme', 'gold-theme', 'purple-theme');
+      hud.classList.add('active');
+      
+      if (p.iceTheme) hud.classList.add('ice-theme');
+      else if (p.goldTheme) hud.classList.add('gold-theme');
+      else if (p.purpleTheme) hud.classList.add('purple-theme');
+    }
     
-    // 🎵 شغّل صوت الخلفية
-    playAmbient();
+    // 🗺️ اعرض الخريطة المصغرة
+        // 🗺️ اعرض الخريطة المصغرة
+    const map = document.getElementById('minimap-hud');
+    map.classList.remove('ice-theme', 'gold-theme', 'purple-theme');
+    map.classList.add('active');
+    
+    if (p.iceTheme) {
+      map.classList.add('ice-theme');
+    } else if (p.goldTheme) {
+      map.classList.add('gold-theme');
+    } else if (p.purpleTheme) {
+      map.classList.add('purple-theme');
+    }
+        playAmbient();
 
     showHint('🌊 وصلت إلى عالم ميلر', 3000);
+    
+    // 👹 ابدأ الوحش — فقط في مان
+    if (p.id === 'mann') {
+      resetMonsterState();
+      setTimeout(() => startMonsterWarning(), MONSTER_CONFIG.warnDelay);
+    }
   }, 800);
 };
 
@@ -1515,12 +2615,14 @@ window.exitPlanetWorld = function () {
   worldMapObject = null;
   SKIN_CONFIG.object = null;
   VIDEO_OBJECT_CONFIG.object = null;   // ← جديد
-
+  PHOTO_MISSION_CONFIG.object = null;   // 🖼️ تنظيف
 stopLiveTimeCounter();   // ⏱️ أوقف العداد
 stopAmbient();
+resetMonsterState();   // 👹 أعد تعيين الوحش
 
-  document.getElementById('player-pos-display').style.display = 'none';
-  document.getElementById('planet-info').style.display = 'block';
+   const posDisplay = document.getElementById('player-pos-display');
+  posDisplay.style.display = 'none';
+  posDisplay.classList.remove('ice-theme', 'gold-theme', 'purple-theme');  document.getElementById('planet-info').style.display = 'block';
   document.getElementById('nav-dock').style.display = 'flex';
   document.getElementById('top-controls').style.display = 'flex';
   document.getElementById('controls-hint').style.display = isMobile ? 'none' : 'block';
@@ -1538,7 +2640,14 @@ stopAmbient();
   const targetPos = new THREE.Vector3(p.pos.x, p.pos.y, p.pos.z);
   camera.position.copy(targetPos.clone().add(new THREE.Vector3(0, 15, 45)));
   controls.target.copy(targetPos);
-
+  // ⭐ اخفي HUD النجوم
+  document.getElementById('stars-hud').classList.remove('active');
+  document.getElementById('stars-hud').classList.remove('ice-theme', 'gold-theme', 'purple-theme');    // 🗺️ اخفي الخريطة
+   document.getElementById('minimap-hud').classList.remove('active');
+  document.getElementById('minimap-hud').classList.remove('ice-theme', 'gold-theme', 'purple-theme');
+  // 🎵 رجّع صوت الفضاء
+  playSpaceAmbient();
+  
   showHint('🚀 رجعت للفضاء', 2000);
 };
 
@@ -1546,14 +2655,16 @@ stopAmbient();
 // 13. بناء عالم ميلر
 // ==========================================
 function buildMillerWorld() {
+  const p = PLANETS[currentIdx];
+  
   planetScene = new THREE.Scene();
-  planetScene.background = new THREE.Color(0x001a33);
-  planetScene.fog = new THREE.FogExp2(0x005c97, 0.015);
+  planetScene.background = new THREE.Color(p.worldBackground);
+  planetScene.fog = new THREE.FogExp2(p.worldFogColor, p.worldFogDensity);
 
-  const ambient = new THREE.AmbientLight(0x88bbff, 0.7);
+  const ambient = new THREE.AmbientLight(p.worldAmbient, p.worldAmbientIntensity);
   planetScene.add(ambient);
 
-  const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+  const sun = new THREE.DirectionalLight(p.worldSunColor, p.worldSunIntensity);
   sun.position.set(50, 100, 30);
   sun.castShadow = true;
   sun.shadow.mapSize.width = 2048;
@@ -1565,25 +2676,16 @@ function buildMillerWorld() {
   planetScene.add(sun);
 
   gltfLoader.load(
-    WORLD_CONFIG.mapUrl,
+    p.worldUrl,
     gltf => {
       const worldMap = gltf.scene;
-
       const rawBox = new THREE.Box3().setFromObject(worldMap);
       const rawSize = rawBox.getSize(new THREE.Vector3());
       const footprint = Math.max(rawSize.x, rawSize.z) || 1;
-      const autoScale = WORLD_CONFIG.targetSize / footprint;
+      const autoScale = p.worldTargetSize / footprint;
 
-      worldMap.position.set(
-        WORLD_CONFIG.position.x,
-        WORLD_CONFIG.position.y,
-        WORLD_CONFIG.position.z
-      );
-      worldMap.rotation.set(
-        WORLD_CONFIG.rotation.x,
-        WORLD_CONFIG.rotation.y,
-        WORLD_CONFIG.rotation.z
-      );
+      worldMap.position.set(p.worldPosition.x, p.worldPosition.y, p.worldPosition.z);
+      worldMap.rotation.set(p.worldRotation.x, p.worldRotation.y, p.worldRotation.z);
       worldMap.scale.setScalar(autoScale);
 
       worldMap.traverse(c => {
@@ -1602,11 +2704,13 @@ function buildMillerWorld() {
 
       console.log('✅ تم تحميل الماب 3D — Scale:', autoScale.toFixed(3));
 
-      // ⭐ بعد تحميل الماب، حمّل السكن والرسالة
       createMessageBox();
       loadSkinObject();
-      loadVideoObject();   // ← جديد
+      loadVideoObject();
       createPlayer();
+      spawnStars();   // ⭐ وزّع النجوم
+      loadPhotoObject();   // 🖼️ مهمة الصورة (كوكب ادموندز)
+
     },
     xhr => {
       if (xhr.total) {
@@ -1617,7 +2721,10 @@ function buildMillerWorld() {
     err => {
       console.warn('فشل تحميل الماب:', err);
       const groundGeo = new THREE.CircleGeometry(60, 64);
-      const groundMat = new THREE.MeshStandardMaterial({ color: 0xc2a878, roughness: 0.9 });
+      const groundMat = new THREE.MeshStandardMaterial({ 
+        color: p.iceTheme ? 0xd0e8f5 : 0xc2a878,
+        roughness: 0.9 
+      });
       const ground = new THREE.Mesh(groundGeo, groundMat);
       ground.rotation.x = -Math.PI / 2;
       ground.receiveShadow = true;
@@ -1625,7 +2732,9 @@ function buildMillerWorld() {
 
       createMessageBox();
       loadSkinObject();
+      loadVideoObject();
       createPlayer();
+      loadPhotoObject();
     }
   );
 }
@@ -1836,8 +2945,16 @@ function createPlayer() {
       model.position.sub(center);
       model.position.y += size.y / 2;
 
-      const sf = CHARACTER_CONFIG.height / size.y;
-      const wrapper = new THREE.Group();
+      // 🎯 اختر الحجم حسب الكوكب الحالي
+      const currentPlanet = PLANETS[currentIdx];
+      const planetId = currentPlanet ? currentPlanet.id : 'miller';
+      const playerHeight = (CHARACTER_CONFIG.heightPerPlanet && CHARACTER_CONFIG.heightPerPlanet[planetId] !== undefined)
+        ? CHARACTER_CONFIG.heightPerPlanet[planetId]
+        : CHARACTER_CONFIG.height;
+
+      const sf = playerHeight / size.y;
+      
+      console.log(`🧍 حجم الشخصية في ${planetId}: ${playerHeight}`);      const wrapper = new THREE.Group();
       wrapper.add(model);
       wrapper.scale.setScalar(sf);
 
@@ -2040,14 +3157,14 @@ function updateTPSCamera(dt) {
   if (!playerGroup) return;
 
   const targetPos = playerGroup.position.clone();
-  targetPos.y += CAMERA_HEIGHT;
+  targetPos.y += currentCameraHeight;   // ← استخدم المتغير
 
-  const offsetX = Math.sin(cameraYaw) * CAMERA_DISTANCE;
-  const offsetZ = Math.cos(cameraYaw) * CAMERA_DISTANCE;
+  const offsetX = Math.sin(cameraYaw) * currentCameraDistance;   // ← استخدم المتغير
+  const offsetZ = Math.cos(cameraYaw) * currentCameraDistance;   // ← استخدم المتغير
 
   const camTarget = new THREE.Vector3(
     targetPos.x + offsetX,
-    targetPos.y + Math.sin(cameraPitch) * CAMERA_DISTANCE,
+    targetPos.y + Math.sin(cameraPitch) * currentCameraDistance,   // ← استخدم المتغير
     targetPos.z + offsetZ
   );
 
@@ -2107,12 +3224,55 @@ window.handleInteract = function () {
   }
 
   // 3) فحص الفيديو
+    // 3) فحص الفيديو
   if (VIDEO_OBJECT_CONFIG.object) {
     const dist = playerGroup.position.distanceTo(VIDEO_OBJECT_CONFIG.object.position);
     if (dist < VIDEO_OBJECT_CONFIG.interactDistance && !VIDEO_OBJECT_CONFIG.viewed) {
       playVideo();
+      return;
     }
   }
+
+  // 4) 🖼️ فحص مهمة الصورة (كوكب ادموندز)
+  if (PHOTO_MISSION_CONFIG.object && !PHOTO_MISSION_CONFIG.completed) {
+    const p = PLANETS[currentIdx];
+    if (p.id === 'edmunds') {
+      const dist = playerGroup.position.distanceTo(PHOTO_MISSION_CONFIG.object.position);
+      if (dist < PHOTO_MISSION_CONFIG.interactDistance) {
+        openPhotoMission();
+        return;
+      }
+    }
+  }
+};
+
+// 🖼️ فتح مهمة الصورة
+window.openPhotoMission = function () {
+  document.getElementById('photo-mission-modal').style.display = 'flex';
+};
+
+// 🖼️ إغلاق وإتمام المهمة
+window.closePhotoMission = function () {
+  document.getElementById('photo-mission-modal').style.display = 'none';
+  PHOTO_MISSION_CONFIG.completed = true;
+
+  // اخفي الهالة
+  if (PHOTO_MISSION_CONFIG.object && PHOTO_MISSION_CONFIG.object.userData.halo) {
+    PHOTO_MISSION_CONFIG.object.userData.halo.visible = false;
+  }
+
+  playTone(880, 0.2, 'sine');
+  setTimeout(() => playTone(1100, 0.3, 'sine'), 150);
+
+  showHint('🎉 أكملت مهمة الصورة!', 2500);
+
+  // ✅ أضف حالة الحفظ
+  saveProgress();
+
+  // 🎯 كمّل مهمة الكوكب (يفتح جارجانتوا)
+  setTimeout(() => {
+    completeMission();
+  }, 1200);
 };
 
 // للتوافق مع الكود القديم
@@ -2233,9 +3393,10 @@ function showRewardCode() {
   SKIN_CONFIG.completed = true;
 
   // اخفي الهالة
-  if (SKIN_CONFIG.object && SKIN_CONFIG.object.userData.halo) {
+    if (SKIN_CONFIG.object && SKIN_CONFIG.object.userData.halo) {
     SKIN_CONFIG.object.userData.halo.visible = false;
   }
+  saveProgress();
 }
 
 window.closeRewardModal = function () {
@@ -2251,11 +3412,14 @@ function setupMobileControls() {
   const knob = document.getElementById('joystick-knob');
   const cameraZone = document.getElementById('camera-zone');
 
+  // ===== الجويستيك (يتتبع إصبعه بس) =====
   joystickZone.addEventListener('touchstart', e => {
     e.preventDefault();
-    const touch = e.touches[0];
-    const rect = joystickZone.getBoundingClientRect();
+    if (joyTouchId !== null) return;
+    const touch = e.changedTouches[0];
+    joyTouchId = touch.identifier;
 
+    const rect = joystickZone.getBoundingClientRect();
     joystickCenter.x = touch.clientX - rect.left;
     joystickCenter.y = touch.clientY - rect.top;
 
@@ -2269,16 +3433,16 @@ function setupMobileControls() {
   joystickZone.addEventListener('touchmove', e => {
     e.preventDefault();
     if (!joystickActive) return;
-    const touch = e.touches[0];
-    const rect = joystickZone.getBoundingClientRect();
+    const touch = Array.from(e.touches).find(t => t.identifier === joyTouchId);
+    if (!touch) return;
 
+    const rect = joystickZone.getBoundingClientRect();
     const dx = touch.clientX - rect.left - joystickCenter.x;
     const dy = touch.clientY - rect.top - joystickCenter.y;
 
     const maxDist = 45;
     const dist = Math.hypot(dx, dy);
     const clampedDist = Math.min(dist, maxDist);
-
     const angle = Math.atan2(dy, dx);
     const kx = Math.cos(angle) * clampedDist;
     const ky = Math.sin(angle) * clampedDist;
@@ -2288,21 +3452,26 @@ function setupMobileControls() {
     joystickValue.x = kx / maxDist;
     joystickValue.y = ky / maxDist;
 
-    isRunning = dist > maxDist * 0.8;
+    joyRun = dist > maxDist * 0.8;
+    isRunning = joyRun || runBtnHeld;
   }, { passive: false });
 
   const endJoy = e => {
+    const mine = Array.from(e.changedTouches).some(t => t.identifier === joyTouchId);
+    if (!mine) return;
+    joyTouchId = null;
     joystickActive = false;
     joystick.classList.remove('active');
     knob.style.transform = 'translate(-50%, -50%)';
     joystickValue.x = 0;
     joystickValue.y = 0;
-    isRunning = false;
+    joyRun = false;
+    isRunning = runBtnHeld;
   };
-
   joystickZone.addEventListener('touchend', endJoy);
   joystickZone.addEventListener('touchcancel', endJoy);
 
+  // ===== الكاميرا (سحب) =====
   let camTouchId = null;
   let camLastPos = { x: 0, y: 0 };
 
@@ -2329,22 +3498,40 @@ function setupMobileControls() {
     }
   }, { passive: false });
 
-  cameraZone.addEventListener('touchend', e => {
+  const endCam = e => {
     for (const touch of e.changedTouches) {
       if (touch.identifier === camTouchId) camTouchId = null;
     }
-  });
+  };
+  cameraZone.addEventListener('touchend', endCam);
+  cameraZone.addEventListener('touchcancel', endCam);
 
+  // ===== القفز =====
   const jumpBtn = document.getElementById('jump-btn');
-  jumpBtn.addEventListener('touchstart', e => { e.preventDefault(); isJumpBtnPressed = true; });
-  jumpBtn.addEventListener('touchend', e => { e.preventDefault(); isJumpBtnPressed = false; });
+  const jumpOn  = e => { e.preventDefault(); isJumpBtnPressed = true; };
+  const jumpOff = e => { e.preventDefault(); isJumpBtnPressed = false; };
+  jumpBtn.addEventListener('touchstart', jumpOn);
+  jumpBtn.addEventListener('touchend', jumpOff);
+  jumpBtn.addEventListener('touchcancel', jumpOff);
   jumpBtn.addEventListener('mousedown', () => { isJumpBtnPressed = true; });
   jumpBtn.addEventListener('mouseup', () => { isJumpBtnPressed = false; });
 
+  // ===== الجري =====
   const runBtn = document.getElementById('run-btn');
-  runBtn.addEventListener('touchstart', e => { e.preventDefault(); isRunning = true; });
-  runBtn.addEventListener('touchend', e => { e.preventDefault(); isRunning = false; });
+  runBtn.addEventListener('touchstart', e => {
+    e.preventDefault();
+    runBtnHeld = true;
+    isRunning = true;
+  });
+  const runOff = e => {
+    e.preventDefault();
+    runBtnHeld = false;
+    isRunning = joyRun;
+  };
+  runBtn.addEventListener('touchend', runOff);
+  runBtn.addEventListener('touchcancel', runOff);
 
+  // ===== الماوس للكمبيوتر =====
   cameraZone.addEventListener('mousedown', e => {
     if (currentMode !== 'planet') return;
     let lastX = e.clientX, lastY = e.clientY;
@@ -2363,7 +3550,560 @@ function setupMobileControls() {
     document.addEventListener('mouseup', onUp);
   });
 }
+// ==========================================
+// ⭐ نظام النجوم
+// ==========================================
 
+// توليد نجمة واحدة (شكل هندسي)
+function createStarMesh() {
+  const group = new THREE.Group();
+  
+  // ⭐ حمّل النجمة GLB
+  gltfLoader.load(
+    STARS_CONFIG.url,
+    gltf => {
+      const star = gltf.scene;
+      
+      star.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+      
+      // اضبط الحجم
+      const box = new THREE.Box3().setFromObject(star);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      star.position.sub(center);
+      
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const sf = 2 / maxDim;   // حجم النجمة النهائي
+      star.scale.setScalar(sf);
+      
+      group.add(star);
+    },
+    undefined,
+    err => {
+      console.warn('فشل تحميل النجمة GLB — استخدام بديل:', err);
+      // بديل: كرة مضيئة
+      const coreGeo = new THREE.SphereGeometry(0.5, 16, 16);
+      const coreMat = new THREE.MeshStandardMaterial({
+        color: 0xffd700,
+        emissive: 0xffd700,
+        emissiveIntensity: 2
+      });
+      const core = new THREE.Mesh(coreGeo, coreMat);
+      group.add(core);
+    }
+  );
+  
+  // ضوء النجمة
+  const light = new THREE.PointLight(0xffd700, 3, 10);
+  group.add(light);
+  
+  group.userData.isStar = true;
+  group.userData.rotationSpeed = 0.5 + Math.random() * 0.5;
+  group.userData.bobSpeed = 1 + Math.random();
+  group.userData.bobOffset = Math.random() * Math.PI * 2;
+  group.userData.originalY = 0;
+  
+  return group;
+}
+
+// توزيع النجوم في العالم
+function spawnStars() {
+  // ⚠️ فحص: هل هذا الكوكب مسموح؟
+  const p = PLANETS[currentIdx];
+  if (!STARS_CONFIG.onlyFor.includes(p.id)) {
+    console.log('⚠️ النجوم مشغّلة فقط في:', STARS_CONFIG.onlyFor.join(', '));
+    return;
+  }
+  
+  // نظّف النجوم القديمة
+  STARS_CONFIG.stars.forEach(s => {
+    if (s.parent) s.parent.remove(s);
+  });
+  STARS_CONFIG.stars = [];
+  STARS_CONFIG.collected = 0;
+  STARS_CONFIG.completed = false;
+  
+  // وزّع 20 نجمة عشوائياً
+  for (let i = 0; i < STARS_CONFIG.total; i++) {
+    const star = createStarMesh();
+    
+    // موقع عشوائي
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 20 + Math.random() * STARS_CONFIG.spawnRadius;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    
+    // ابحث عن الأرض عند هذا الموقع
+    let groundY = 0;
+    if (worldMapObject) {
+      const origin = new THREE.Vector3(x, worldMaxY, z);
+      raycaster.set(origin, downVector);
+      raycaster.far = worldMaxY + 50;
+      const intersects = raycaster.intersectObject(worldMapObject, true);
+      if (intersects.length > 0) {
+        groundY = intersects[0].point.y;
+      }
+    }
+    
+    star.position.set(x, groundY + 2, z);
+    star.userData.originalY = groundY + 2;
+    star.scale.setScalar(STARS_CONFIG.starScale);
+    
+    planetScene.add(star);
+    STARS_CONFIG.stars.push(star);
+  }
+  
+  console.log('⭐ تم توزيع', STARS_CONFIG.total, 'نجمة');
+  updateStarsHUD();
+}
+
+// تحديث HUD
+function updateStarsHUD() {
+  const hud = document.getElementById('stars-hud');
+  const collectedEl = document.getElementById('stars-collected');
+  const fillEl = document.getElementById('stars-progress-fill');
+  
+  if (collectedEl) collectedEl.textContent = STARS_CONFIG.collected;
+  if (fillEl) {
+    const pct = (STARS_CONFIG.collected / STARS_CONFIG.total) * 100;
+    fillEl.style.width = pct + '%';
+  }
+  
+  // ثيم حسب الكوكب
+  const p = PLANETS[currentIdx];
+  if (p && p.iceTheme) {
+    hud.classList.add('ice-theme');
+  } else {
+    hud.classList.remove('ice-theme');
+  }
+}
+
+// فحص جمع النجوم
+function checkStarCollection() {
+  if (!playerGroup) return;
+  if (STARS_CONFIG.completed) return;
+  
+  for (let i = STARS_CONFIG.stars.length - 1; i >= 0; i--) {
+    const star = STARS_CONFIG.stars[i];
+    const dist = playerGroup.position.distanceTo(star.position);
+    
+    if (dist < STARS_CONFIG.collectDistance) {
+      // 🎉 جمع!
+      collectStar(star, i);
+    }
+  }
+}
+
+// جمع نجمة
+function collectStar(star, index) {
+  // احذف من المشهد
+  planetScene.remove(star);
+  STARS_CONFIG.stars.splice(index, 1);
+  STARS_CONFIG.collected++;
+  
+  // صوت
+  playTone(800 + STARS_CONFIG.collected * 50, 0.15, 'sine');
+  
+  // حدّث HUD
+  updateStarsHUD();
+  
+  // رسالة صغيرة
+  showHint(`⭐ ${STARS_CONFIG.collected} / ${STARS_CONFIG.total}`, 800);
+  
+  // تحقق من الفوز
+  if (STARS_CONFIG.collected >= STARS_CONFIG.total) {
+    setTimeout(onStarsComplete, 500);
+  }
+}
+
+// انتهاء مهمة النجوم
+function onStarsComplete() {
+  STARS_CONFIG.completed = true;
+  showHint('🎉 أكملتِ جمع النجوم!', 3000);
+  
+  // كمل مهمة الكوكب
+  completeMission();
+}
+
+// تحريك النجوم (دوران + طفو)
+function animateStars(dt) {
+  STARS_CONFIG.stars.forEach(star => {
+    star.rotation.y += star.userData.rotationSpeed * dt;
+    
+    const bobTime = performance.now() * 0.001 * star.userData.bobSpeed + star.userData.bobOffset;
+    star.position.y = star.userData.originalY + Math.sin(bobTime) * 0.5;
+  });
+}
+// ==========================================
+// 🗺️ الخريطة المصغرة
+// ==========================================
+let minimapCtx = null;
+let minimapCanvas = null;
+const MINIMAP_RADIUS = 60;   // نطاق الخريطة (وحدات)
+
+function initMinimap() {
+  minimapCanvas = document.getElementById('minimap-canvas');
+  if (!minimapCanvas) return;
+  minimapCtx = minimapCanvas.getContext('2d');
+}
+
+function drawMinimap() {
+  if (!minimapCtx || !playerGroup) return;
+  if (currentMode !== 'planet') return;
+  
+  const canvas = minimapCanvas;
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const scale = (w / 2) / MINIMAP_RADIUS;   // بكسل لكل وحدة
+  
+  // 🎨 خلفية
+  minimapCtx.clearRect(0, 0, w, h);
+  
+  // 🎨 جريد
+  minimapCtx.strokeStyle = 'rgba(0, 210, 255, 0.1)';
+  minimapCtx.lineWidth = 1;
+  for (let i = -MINIMAP_RADIUS; i <= MINIMAP_RADIUS; i += 20) {
+    minimapCtx.beginPath();
+    minimapCtx.moveTo(cx + i * scale, 0);
+    minimapCtx.lineTo(cx + i * scale, h);
+    minimapCtx.stroke();
+    
+    minimapCtx.beginPath();
+    minimapCtx.moveTo(0, cy + i * scale);
+    minimapCtx.lineTo(w, cy + i * scale);
+    minimapCtx.stroke();
+  }
+  
+  // 🎨 دائرة الحدود
+  minimapCtx.strokeStyle = 'rgba(0, 210, 255, 0.4)';
+  minimapCtx.lineWidth = 2;
+  minimapCtx.beginPath();
+  minimapCtx.arc(cx, cy, w / 2 - 2, 0, Math.PI * 2);
+  minimapCtx.stroke();
+  
+  // 🎨 زاوية دوران اللاعب
+  const playerAngle = playerGroup.rotation.y;
+  
+  // ⭐ النجوم
+  STARS_CONFIG.stars.forEach(star => {
+    const dx = star.position.x - playerGroup.position.x;
+    const dz = star.position.z - playerGroup.position.z;
+    
+    // 🎯 دوران عكسي (عشان اللاعب في المنتصف والاتجاه ثابت)
+    const cosA = Math.cos(-playerAngle);
+    const sinA = Math.sin(-playerAngle);
+    const rx = dx * cosA - dz * sinA;
+    const rz = dx * sinA + dz * cosA;
+    
+    // 🎯 تحويل لإحداثيات Canvas
+    const px = cx + rx * scale;
+    const py = cy + rz * scale;
+    
+    // 🎯 فحص داخل الدائرة
+    const distFromCenter = Math.sqrt((px - cx) ** 2 + (py - cy) ** 2);
+    if (distFromCenter > w / 2 - 4) return;   // خارج النطاق
+    
+    // 🎨 رسم النجمة
+    minimapCtx.fillStyle = '#ffd700';
+    minimapCtx.shadowColor = '#ffd700';
+    minimapCtx.shadowBlur = 10;
+    minimapCtx.beginPath();
+    minimapCtx.arc(px, py, 4, 0, Math.PI * 2);
+    minimapCtx.fill();
+    minimapCtx.shadowBlur = 0;
+  });
+  
+  
+  // 🎁 السكن
+  if (SKIN_CONFIG.object) {
+    drawMapIcon(SKIN_CONFIG.object.position, '#00ffaa', 'diamond', cx, cy, scale, playerAngle);
+  }
+  
+  // 🧍 اللاعب (في المنتصف)
+  minimapCtx.fillStyle = '#ffffff';
+  minimapCtx.shadowColor = '#00d2ff';
+  minimapCtx.shadowBlur = 15;
+  minimapCtx.beginPath();
+  minimapCtx.arc(cx, cy, 5, 0, Math.PI * 2);
+  minimapCtx.fill();
+  minimapCtx.shadowBlur = 0;
+  
+  // 🎯 اتجاه اللاعب (سهم صغير)
+  minimapCtx.strokeStyle = '#00d2ff';
+  minimapCtx.lineWidth = 2;
+  minimapCtx.beginPath();
+  minimapCtx.moveTo(cx, cy);
+  minimapCtx.lineTo(cx, cy - 10);
+  minimapCtx.stroke();
+}
+
+// دالة مساعدة لرسم أيقونة على الخريطة
+function drawMapIcon(worldPos, color, shape, cx, cy, scale, playerAngle) {
+  const dx = worldPos.x - playerGroup.position.x;
+  const dz = worldPos.z - playerGroup.position.z;
+  
+  const cosA = Math.cos(-playerAngle);
+  const sinA = Math.sin(-playerAngle);
+  const rx = dx * cosA - dz * sinA;
+  const rz = dx * sinA + dz * cosA;
+  
+  const px = cx + rx * scale;
+  const py = cy + rz * scale;
+  
+  const w = minimapCanvas.width;
+  const distFromCenter = Math.sqrt((px - cx) ** 2 + (py - cy) ** 2);
+  if (distFromCenter > w / 2 - 4) return;
+  
+  minimapCtx.fillStyle = color;
+  minimapCtx.shadowColor = color;
+  minimapCtx.shadowBlur = 8;
+  
+  minimapCtx.beginPath();
+  if (shape === 'diamond') {
+    minimapCtx.moveTo(px, py - 5);
+    minimapCtx.lineTo(px + 5, py);
+    minimapCtx.lineTo(px, py + 5);
+    minimapCtx.lineTo(px - 5, py);
+    minimapCtx.closePath();
+  } else if (shape === 'triangle') {
+    minimapCtx.moveTo(px, py - 5);
+    minimapCtx.lineTo(px + 5, py + 4);
+    minimapCtx.lineTo(px - 5, py + 4);
+    minimapCtx.closePath();
+  } else if (shape === 'rect') {
+    minimapCtx.rect(px - 4, py - 4, 8, 8);
+  } else {
+    minimapCtx.arc(px, py, 4, 0, Math.PI * 2);
+  }
+  minimapCtx.fill();
+  minimapCtx.shadowBlur = 0;
+}
+// ==========================================
+// 👹 نظام الوحش
+// ==========================================
+
+// تشغيل التحذير
+function startMonsterWarning() {
+  const p = PLANETS[currentIdx];
+  if (p.id !== 'mann') return;
+  if (MONSTER_CONFIG.caught) return;
+  
+  const warn = document.getElementById('monster-warn');
+  const countdown = document.getElementById('warn-countdown');
+  
+  warn.classList.add('show');
+  
+  let timeLeft = MONSTER_CONFIG.warnDuration;
+  countdown.textContent = timeLeft;
+  
+  playTone(200, 0.3, 'sawtooth');
+  
+  const interval = setInterval(() => {
+    timeLeft--;
+    countdown.textContent = timeLeft;
+    playTone(150 + timeLeft * 10, 0.15, 'square');
+    
+    if (timeLeft <= 3 && timeLeft > 0) {
+      warn.style.animationDuration = '0.3s';
+    }
+    
+    if (timeLeft <= 0) {
+      clearInterval(interval);
+      warn.classList.remove('show');
+      warn.style.animationDuration = '1s';
+      spawnMonster();
+    }
+  }, 1000);
+}
+
+// توليد الوحش
+function spawnMonster() {
+  if (MONSTER_CONFIG.object) return;
+  if (!playerGroup) return;
+  if (!planetScene) return;
+  
+  MONSTER_CONFIG.active = true;
+  MONSTER_CONFIG.spawnTime = performance.now();
+  
+  showHint('👹 الوحش ظهر! اهرب!', 3000);
+  
+  playTone(80, 1, 'sawtooth');
+  setTimeout(() => playTone(60, 1.5, 'sawtooth'), 300);
+  
+  gltfLoader.load(
+    MONSTER_CONFIG.modelUrl,
+    gltf => {
+      const monster = gltf.scene;
+      
+      monster.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+      
+      const box = new THREE.Box3().setFromObject(monster);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      monster.position.sub(center);
+      
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const sf = 2.5 / maxDim;
+      monster.scale.setScalar(sf);
+      
+      const playerPos = playerGroup.position.clone();
+      const angle = Math.random() * Math.PI * 2;
+      const monsterX = playerPos.x + Math.cos(angle) * MONSTER_CONFIG.spawnDistance;
+      const monsterZ = playerPos.z + Math.sin(angle) * MONSTER_CONFIG.spawnDistance;
+      
+      let groundY = playerPos.y;
+      if (worldMapObject) {
+        const origin = new THREE.Vector3(monsterX, worldMaxY, monsterZ);
+        raycaster.set(origin, downVector);
+        raycaster.far = worldMaxY + 50;
+        const intersects = raycaster.intersectObject(worldMapObject, true);
+        if (intersects.length > 0) {
+          groundY = intersects[0].point.y;
+        }
+      }
+      
+      monster.position.set(monsterX, groundY, monsterZ);
+      
+      planetScene.add(monster);
+      MONSTER_CONFIG.object = monster;
+      
+      console.log('👹 ظهر الوحش!');
+    },
+    xhr => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        showHint('👹 جاري تحميل الوحش... ' + pct + '%', 500);
+      }
+    },
+    err => {
+      console.warn('فشل تحميل الوحش — استخدام بديل:', err);
+      const placeholder = new THREE.Group();
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: 0xff0000,
+        emissive: 0xff0000,
+        emissiveIntensity: 0.5
+      });
+      const body = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), bodyMat);
+      body.position.y = 1.5;
+      placeholder.add(body);
+      
+      const playerPos = playerGroup.position.clone();
+      const angle = Math.random() * Math.PI * 2;
+      placeholder.position.set(
+        playerPos.x + Math.cos(angle) * MONSTER_CONFIG.spawnDistance,
+        playerPos.y,
+        playerPos.z + Math.sin(angle) * MONSTER_CONFIG.spawnDistance
+      );
+      
+      planetScene.add(placeholder);
+      MONSTER_CONFIG.object = placeholder;
+    }
+  );
+}
+
+// تحديث حركة الوحش
+function updateMonster(dt) {
+  if (!MONSTER_CONFIG.active) return;
+  if (!MONSTER_CONFIG.object || !playerGroup) return;
+  if (MONSTER_CONFIG.caught) return;
+  
+  const monster = MONSTER_CONFIG.object;
+  const playerPos = playerGroup.position;
+  const monsterPos = monster.position;
+  
+  const dx = playerPos.x - monsterPos.x;
+  const dz = playerPos.z - monsterPos.z;
+  const dist = Math.sqrt(dx * dx + dz * dz);
+  
+  if (dist < MONSTER_CONFIG.catchDistance) {
+    onMonsterCatch();
+    return;
+  }
+  
+  if (dist > 0.1) {
+    const dirX = dx / dist;
+    const dirZ = dz / dist;
+    const speed = MONSTER_CONFIG.speed;
+    
+    monster.position.x += dirX * speed * dt;
+    monster.position.z += dirZ * speed * dt;
+    
+    if (worldMapObject) {
+      const origin = new THREE.Vector3(monster.position.x, worldMaxY, monster.position.z);
+      raycaster.set(origin, downVector);
+      raycaster.far = worldMaxY + 50;
+      const intersects = raycaster.intersectObject(worldMapObject, true);
+      if (intersects.length > 0) {
+        monster.position.y = intersects[0].point.y;
+      }
+    }
+    
+    monster.rotation.y = Math.atan2(dirX, dirZ);
+  }
+}
+
+// الإمساك
+function onMonsterCatch() {
+  if (MONSTER_CONFIG.caught) return;
+  
+  MONSTER_CONFIG.caught = true;
+  MONSTER_CONFIG.active = false;
+  
+  playTone(80, 0.5, 'sawtooth');
+  setTimeout(() => playTone(60, 1, 'sawtooth'), 200);
+  
+  document.body.style.background = '#330000';
+  document.body.style.transition = 'background 0.5s';
+  
+  showHint('💀 الوحش أمسكك!', 2000);
+  
+  setTimeout(() => {
+    const modal = document.getElementById('monster-video-modal');
+    const video = document.getElementById('monster-video-player');
+    modal.style.display = 'flex';
+    video.currentTime = 0;
+    video.load();
+    video.play().catch(() => {});
+  }, 1500);
+}
+
+// إغلاق فيديو الوحش
+window.closeMonsterVideo = function () {
+  const modal = document.getElementById('monster-video-modal');
+  const video = document.getElementById('monster-video-player');
+  video.pause();
+  video.currentTime = 0;
+  modal.style.display = 'none';
+  
+  document.body.style.background = '#000';
+  
+  setTimeout(() => {
+    resetMonsterState();
+    exitPlanetWorld();
+  }, 500);
+};
+
+// إعادة تعيين حالة الوحش
+function resetMonsterState() {
+  if (MONSTER_CONFIG.object && MONSTER_CONFIG.object.parent) {
+    MONSTER_CONFIG.object.parent.remove(MONSTER_CONFIG.object);
+  }
+  MONSTER_CONFIG.object = null;
+  MONSTER_CONFIG.active = false;
+  MONSTER_CONFIG.caught = false;
+}
 // ==========================================
 // 20. Hint
 // ==========================================
@@ -2376,7 +4116,119 @@ function showHint(text, duration = 3000) {
 // ==========================================
 // 🎬 نظام الفيديو
 // ==========================================
+// 🖼️ تحميل أوبجكت مهمة الصورة
+function loadPhotoObject() {
+  gltfLoader.load(
+    PHOTO_MISSION_CONFIG.url,
+    gltf => {
+      const obj = gltf.scene;
+      obj.position.set(
+        PHOTO_MISSION_CONFIG.position.x,
+        PHOTO_MISSION_CONFIG.position.y,
+        PHOTO_MISSION_CONFIG.position.z
+      );
+      obj.rotation.set(
+        PHOTO_MISSION_CONFIG.rotation.x,
+        PHOTO_MISSION_CONFIG.rotation.y,
+        PHOTO_MISSION_CONFIG.rotation.z
+      );
+      obj.scale.setScalar(PHOTO_MISSION_CONFIG.scale);
+
+      obj.traverse(c => {
+        if (c.isMesh) {
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+
+      // 💗 هالة وردية حول الأوبجكت
+      const halo = createPhotoObjectHalo(obj);
+      obj.add(halo);
+      obj.userData.halo = halo;
+
+      planetScene.add(obj);
+      PHOTO_MISSION_CONFIG.object = obj;
+
+      console.log('✅ تم تحميل أوبجكت مهمة الصورة');
+    },
+    xhr => {
+      if (xhr.total) {
+        const pct = Math.round(xhr.loaded / xhr.total * 100);
+        showHint('🖼️ جاري تحميل الأوبجكت... ' + pct + '%', 500);
+      }
+    },
+    err => {
+      console.warn('⚠️ فشل تحميل أوبجكت الصورة — استخدام بديل:', err);
+      // بديل: بلورة وردية
+      const placeholder = new THREE.Group();
+      placeholder.position.set(
+        PHOTO_MISSION_CONFIG.position.x,
+        PHOTO_MISSION_CONFIG.position.y,
+        PHOTO_MISSION_CONFIG.position.z
+      );
+
+      const geo = new THREE.OctahedronGeometry(1, 0);
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0xFF85EB,
+        emissive: 0xFF85EB,
+        emissiveIntensity: 1.5,
+        transparent: true,
+        opacity: 0.85
+      });
+      const crystal = new THREE.Mesh(geo, mat);
+      crystal.position.y = 1;
+      placeholder.add(crystal);
+
+      const light = new THREE.PointLight(0xFF85EB, 3, 15);
+      light.position.y = 2;
+      placeholder.add(light);
+
+      planetScene.add(placeholder);
+      PHOTO_MISSION_CONFIG.object = placeholder;
+    }
+  );
+}
+
+// 💗 هالة الأوبجكت
+function createPhotoObjectHalo(obj) {
+  const group = new THREE.Group();
+
+  const box = new THREE.Box3().setFromObject(obj);
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+  const radius = Math.max(size.x, size.z) * 0.8;
+
+  const ringGeo = new THREE.RingGeometry(radius, radius + 0.5, 64);
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: 0xFF85EB,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.7
+  });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = -center.y + 0.1;
+  group.add(ring);
+
+  const iconGeo = new THREE.OctahedronGeometry(0.8);
+  const iconMat = new THREE.MeshStandardMaterial({
+    color: 0xFF85EB,
+    emissive: 0xFF85EB,
+    emissiveIntensity: 2.5
+  });
+  const icon = new THREE.Mesh(iconGeo, iconMat);
+  icon.position.y = size.y + 2;
+  group.add(icon);
+  group.userData.icon = icon;
+
+  const light = new THREE.PointLight(0xFF85EB, 2.5, 20);
+  light.position.y = size.y / 2;
+  group.add(light);
+
+  return group;
+}
 function loadVideoObject() {
+
   gltfLoader.load(
     VIDEO_OBJECT_CONFIG.url,
     gltf => {
@@ -2478,7 +4330,19 @@ function createVideoObjectHalo(obj) {
 
   return group;
 }
+// 🖼️ فحص الاقتراب من أوبجكت الصورة
+function updatePhotoTrigger() {
+  if (!playerGroup || !PHOTO_MISSION_CONFIG.object) return;
+  if (PHOTO_MISSION_CONFIG.completed) return;
 
+  const p = PLANETS[currentIdx];
+  if (p.id !== 'edmunds') return;   // فقط في ادموندز
+
+  const dist = playerGroup.position.distanceTo(PHOTO_MISSION_CONFIG.object.position);
+  if (dist < PHOTO_MISSION_CONFIG.interactDistance) {
+    document.getElementById('interact-btn').classList.add('show');
+  }
+}
 function updateVideoTrigger() {
   if (!playerGroup || !VIDEO_OBJECT_CONFIG.object) return;
 
@@ -2505,9 +4369,11 @@ window.closeVideo = function () {
   modal.style.display = 'none';
   VIDEO_OBJECT_CONFIG.viewed = true;
 
-  if (VIDEO_OBJECT_CONFIG.object && VIDEO_OBJECT_CONFIG.object.userData.halo) {
+   if (VIDEO_OBJECT_CONFIG.object && VIDEO_OBJECT_CONFIG.object.userData.halo) {
     VIDEO_OBJECT_CONFIG.object.userData.halo.visible = false;
   }
+
+  saveProgress();
 
   showHint('🎬 شاهدتِ الرسالة', 2000);
 };
@@ -2518,6 +4384,20 @@ window.closeVideo = function () {
 function startLiveTimeCounter() {
   missionStartTime = performance.now();
   const panel = document.getElementById('live-time-panel');
+  
+  const p = PLANETS[currentIdx];
+  
+  // 🎨 اختار الثيم
+  panel.classList.remove('ice-theme', 'gold-theme', 'purple-theme');
+  
+  if (p.iceTheme) {
+    panel.classList.add('ice-theme');
+  } else if (p.goldTheme) {
+    panel.classList.add('gold-theme');
+  } else if (p.purpleTheme) {
+    panel.classList.add('purple-theme');
+  }
+  
   panel.classList.add('active');
 
   if (liveTimeInterval) clearInterval(liveTimeInterval);
@@ -2568,7 +4448,13 @@ function updateLiveTimeDisplay() {
 
 // تحضير الأصوات
 function initAudio() {
-  // صوت الخلفية
+  // 🆕 صوت الفضاء
+  const spaceAmbient = new Audio(AUDIO_CONFIG.spaceAmbient.url);
+  spaceAmbient.loop = AUDIO_CONFIG.spaceAmbient.loop;
+  spaceAmbient.volume = AUDIO_CONFIG.spaceAmbient.volume;
+  AUDIO_CONFIG.spaceAmbient.audio = spaceAmbient;
+
+  // صوت الخلفية داخل الكوكب
   const ambient = new Audio(AUDIO_CONFIG.ambient.url);
   ambient.loop = AUDIO_CONFIG.ambient.loop;
   ambient.volume = AUDIO_CONFIG.ambient.volume;
@@ -2582,8 +4468,28 @@ function initAudio() {
 
 // تشغيل صوت الخلفية (fade in ناعم)
 function playAmbient() {
-  if (!AUDIO_CONFIG.ambient.audio) return;
   if (AUDIO_CONFIG.muted) return;
+
+  // 🎵 اختر الصوت حسب الكوكب
+  const p = PLANETS[currentIdx];
+  const planetId = p.id;
+  const url = AUDIO_CONFIG.ambientUrls[planetId] || AUDIO_CONFIG.ambientUrls.miller;
+
+  // إذا تغيّر الصوت → حمّل الصوت الجديد
+  if (!AUDIO_CONFIG.ambient.audio || AUDIO_CONFIG.ambient.url !== url) {
+    // أوقف الصوت القديم
+    if (AUDIO_CONFIG.ambient.audio) {
+      AUDIO_CONFIG.ambient.audio.pause();
+      AUDIO_CONFIG.ambient.audio.currentTime = 0;
+    }
+    
+    // حمّل الجديد
+    const newAudio = new Audio(url);
+    newAudio.loop = true;
+    newAudio.volume = 0;
+    AUDIO_CONFIG.ambient.audio = newAudio;
+    AUDIO_CONFIG.ambient.url = url;
+  }
 
   const audio = AUDIO_CONFIG.ambient.audio;
   audio.volume = 0;
@@ -2669,7 +4575,25 @@ function updateFootstepSound(dt, isMoving, isRunning) {
     playFootstep();
   }
 }
+function playSpaceAmbient() {
+  if (!AUDIO_CONFIG.spaceAmbient.audio || AUDIO_CONFIG.muted) return;
+  
+  const audio = AUDIO_CONFIG.spaceAmbient.audio;
+  audio.currentTime = 0;
+  audio.volume = AUDIO_CONFIG.spaceAmbient.volume;
+  audio.play().catch(() => {});
+  AUDIO_CONFIG.spaceAmbient.enabled = true;
+}
 
+// 🆕 إيقاف صوت الفضاء
+function stopSpaceAmbient() {
+  const audio = AUDIO_CONFIG.spaceAmbient.audio;
+  if (!audio || !AUDIO_CONFIG.spaceAmbient.enabled) return;
+  
+  audio.pause();
+  audio.currentTime = 0;
+  AUDIO_CONFIG.spaceAmbient.enabled = false;
+}
 // زر كتم الصوت
 window.toggleMute = function () {
   AUDIO_CONFIG.muted = !AUDIO_CONFIG.muted;
@@ -2683,11 +4607,17 @@ window.toggleMute = function () {
     if (AUDIO_CONFIG.ambient.audio) {
       AUDIO_CONFIG.ambient.audio.pause();
     }
+    if (AUDIO_CONFIG.spaceAmbient.audio) {
+      AUDIO_CONFIG.spaceAmbient.audio.pause();
+    }
   } else {
     icon.className = 'fa-solid fa-volume-high';
     btn.style.color = '#00d2ff';
-    if (AUDIO_CONFIG.ambient.audio && currentMode === 'planet') {
+    if (currentMode === 'planet' && AUDIO_CONFIG.ambient.audio) {
       AUDIO_CONFIG.ambient.audio.play().catch(() => {});
+    }
+    if (currentMode === 'space' && AUDIO_CONFIG.spaceAmbient.audio) {
+      AUDIO_CONFIG.spaceAmbient.audio.play().catch(() => {});
     }
   }
 };
@@ -2795,8 +4725,9 @@ function completeMission() {
   if (currentIdx + 1 < PLANETS.length) {
     PLANETS[currentIdx + 1].unlocked = true;
     refreshPlanetVisual(currentIdx + 1);
-  }
-  updateUI();
+}
+saveProgress();
+updateUI();
   setTimeout(() => {
     const next = PLANETS[currentIdx + 1];
     alert('🎉 أحسنتِ! ' + (next ? 'تم فتح ' + next.name : 'أكملتِ المجرة'));
@@ -2847,8 +4778,37 @@ setTimeout(() => {
     setTimeout(() => l.remove(), 700);
   }
 }, 6000);
+// 🎥 طبّق إعدادات الكاميرا حسب الكوكب الحالي
+function applyCameraSettings() {
+  const p = PLANETS[currentIdx];
+  const planetId = p ? p.id : 'miller';
+  const settings = CAMERA_PER_PLANET[planetId] || { distance: CAMERA_DISTANCE, height: CAMERA_HEIGHT };
+  
+  currentCameraDistance = settings.distance;
+  currentCameraHeight = settings.height;
+  
+  console.log(`🎥 كاميرا ${planetId}: distance=${currentCameraDistance}, height=${currentCameraHeight}`);
+}
 </script>
-
+<!-- 🔒 مودال رمز ميلر -->
+<div id="miller-code-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 78; align-items: center; justify-content: center; padding: 20px;">
+  <div class="glass" style="max-width: 450px; width: 100%; padding: 32px; text-align: center; border-color: rgba(0,210,255,0.5);">
+    <div style="font-size: 50px; margin-bottom: 12px;">🔒</div>
+    <h2 style="font-family: 'Amiri', serif; font-size: 26px; margin: 0 0 10px 0; color: #00d2ff;">كوكب ميلر مقفل</h2>
+    <p style="color: #cbd5e1; font-size: 13px; line-height: 1.7; margin-bottom: 20px;">
+      أدخل الرمز السري للدخول. الرمز تحصل عليه من ميني جيم السكن.
+    </p>
+    <input id="miller-code-input" type="text" placeholder="أدخل الرمز (مثال: FARAH-5D)" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,210,255,0.5); border-radius: 10px; color: #fff; text-align: center; font-size: 14px; margin-bottom: 16px; outline: none; font-family: monospace; letter-spacing: 2px;">
+    <div style="display: flex; gap: 10px;">
+      <button onclick="closeMillerCodeModal()" style="flex: 1; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-weight: bold;">
+        إلغاء
+      </button>
+      <button onclick="verifyMillerCode()" style="flex: 1; padding: 12px; border-radius: 10px; background: linear-gradient(90deg, #00d2ff, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold;">
+        فتح 🔓
+      </button>
+    </div>
+  </div>
+</div>
 <!-- ============ Video Modal 🎬 ============ -->
 <div id="video-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 80; align-items: center; justify-content: center; padding: 20px; flex-direction: column;">
   <div style="width: 100%; max-width: 900px; position: relative;">
@@ -2869,6 +4829,11 @@ setTimeout(() => {
     </button>
   </div>
 </div>
-
+<!-- 🕳️ شاشة انتقالية الثقب الأسود -->
+<div id="blackhole-transition">
+  <div class="bh-particles" id="bh-particles"></div>
+  <div class="bh-text">🕳️<br>أنتِ تدخلين الثقب الأسود</div>
+  <div class="bh-subtext">ENTERING GARGANTUA</div>
+</div>
 </body>
 </html>
