@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>مجرة فرح | رحلة إنترستيلار</title>
+  <link rel="apple-touch-startup-image" href="splash/2868x1320.png" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="مجره فلح | رحله البقاء">
+<meta property="og:description" content="احبج">
+<meta property="og:image" content="https://b4bp.github.io/18/images/banner.jpg">
+<meta property="og:url" content="https://b4bp.github.io/18/">
+<meta name="twitter:card" content="summary_large_image">
+<title>مجره فلح | رحله البقاء </title>
 
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1212,6 +1219,65 @@ html, body { height: 100dvh; }
   .warn-icon      { font-size: 34px; margin-bottom: 4px; }
   .warn-countdown { font-size: 48px; }
 }
+/* 🕳️ شاشة الثقب الأسود - تصميم واقعي (جارجانتوا) */
+  #gargantua-transition {
+    position: fixed; inset: 0; z-index: 9999; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
+    overflow: hidden;
+  }
+  #gargantua-transition.active { opacity: 1; pointer-events: auto; }
+
+  /* القرص المزود (Accretion Disk) - الحلقة المضيئة */
+  .bh-accretion-disk {
+    position: absolute; top: 50%; left: 50%;
+    width: 400px; height: 100px;
+    border-radius: 50%;
+    background: transparent;
+    border: 15px solid rgba(255, 150, 50, 0.8);
+    box-shadow: 0 0 60px rgba(255, 120, 30, 0.9), inset 0 0 40px rgba(255, 150, 50, 0.8);
+    transform: translate(-50%, -50%) rotate(-15deg);
+    filter: blur(5px);
+    animation: diskSpin 3s linear infinite;
+  }
+  
+  /* أفق الحدث (Event Horizon) - الدائرة السوداء المركزية */
+  .bh-event-horizon {
+    position: absolute; top: 50%; left: 50%;
+    width: 180px; height: 180px;
+    background: #000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 50px 10px rgba(255, 150, 50, 0.6), inset 0 0 20px #000;
+    z-index: 2;
+  }
+
+  /* النص */
+  .bh-message {
+    position: absolute; z-index: 10; color: #fff;
+    font-family: 'Amiri', serif; font-size: 30px;
+    text-shadow: 0 0 20px #ff9632;
+    animation: getSuckedIn 8s forwards ease-in;
+    pointer-events: none;
+  }
+
+  /* الجسيمات المنجذبة (النقاط) */
+  .bh-particle-drop {
+    position: absolute; background: #fff; border-radius: 50%;
+    box-shadow: 0 0 15px #ffb347; pointer-events: none; z-index: 1;
+  }
+
+  @keyframes diskSpin {
+    0% { transform: translate(-50%, -50%) rotate(-15deg) scale(1); filter: blur(5px); }
+    50% { transform: translate(-50%, -50%) rotate(-15deg) scale(1.05); filter: blur(8px); }
+    100% { transform: translate(-50%, -50%) rotate(-15deg) scale(1); filter: blur(5px); }
+  }
+  @keyframes getSuckedIn {
+    0% { transform: scale(1.5); opacity: 0; filter: blur(10px); }
+    15% { transform: scale(1.2); opacity: 1; filter: blur(0px); }
+    80% { transform: scale(1); opacity: 1; filter: blur(0px); }
+    100% { transform: scale(0); opacity: 0; filter: blur(10px); }
+  }
 </style>
 </head>
 <body>
@@ -1221,18 +1287,18 @@ html, body { height: 100dvh; }
 
 <div id="rotate-hint">
   <i class="fa-solid fa-mobile-screen"></i>
-  <h2 style="margin: 0 0 8px 0;">أدر جوالك أفقياً 📱</h2>
-  <p style="color: #94a3b8;">لتجربة أفضل في عالم الكوكب</p>
+  <h2 style="margin: 0 0 8px 0;">اقلبي تلفونج 📱</h2>
+  <p style="color: #94a3b8;">اول خطوه</p>
 </div>
 
 <div id="loading">
   <div class="spin"></div>
-  <p style="font-family: monospace; font-size: 14px; color: #00d2ff;">جاري تحميل المجرة...</p>
+  <p style="font-family: monospace; font-size: 14px; color: #00d2ff;">اصبري شوي</p>
   <p style="font-family: monospace; font-size: 12px; color: #64748b;" id="load-pct">0%</p>
 </div>
 
 <button id="exit-world-btn" onclick="exitPlanetWorld()">
-  <i class="fa-solid fa-arrow-right"></i> عودة للفضاء
+  <i class="fa-solid fa-arrow-right"></i> هني ترجعين للفضاء
 </button>
 
 <div id="player-pos-display">
@@ -1251,7 +1317,7 @@ html, body { height: 100dvh; }
   <div class="stars-progress">
     <div class="stars-progress-fill" id="stars-progress-fill"></div>
   </div>
-  <div class="stars-text">اجمع النجوم المنتشرة في العالم</div>
+  <div class="stars-text">جمعي النجوم طالعه لج بالرادار</div>
 </div>
 
 <!-- 🗺️ خريطة مصغرة -->
@@ -1288,7 +1354,7 @@ html, body { height: 100dvh; }
     <span class="lt-value" id="lt-earth-time">--:--:--</span>
   </div>
   <div class="lt-row miller">
-    <span class="lt-label">🪐 MILLER</span>
+    <span class="lt-label">🪐 mann</span>
     <span class="lt-value" id="lt-miller-time">--:--:--</span>
   </div>
   <div class="lt-diff">
@@ -1300,7 +1366,7 @@ html, body { height: 100dvh; }
   <div class="glass" style="padding: 12px 16px; display: flex; align-items: center; gap: 12px;">
     <i class="fa-solid fa-atom" style="font-size: 20px; color: #00d2ff;" id="main-icon"></i>
     <div>
-      <div style="font-weight: 900; font-size: 16px;">مجرة فرح</div>
+      <div style="font-weight: 900; font-size: 16px;">مجره فلح</div>
       <div style="font-size: 10px; color: #94a3b8; font-family: monospace;">INTERSTELLAR SPACE</div>
     </div>
   </div>
@@ -1309,7 +1375,7 @@ html, body { height: 100dvh; }
       <i class="fa-solid fa-volume-high" id="mute-icon"></i>
     </button>
     <button onclick="resetView()" class="glass" style="padding: 10px 14px; color: #00d2ff; cursor: pointer; border: 1px solid rgba(255,255,255,0.12);">
-      <i class="fa-solid fa-house"></i> <span id="reset-text">عرض المجرة</span>
+      <i class="fa-solid fa-house"></i> <span id="reset-text">شوفي المجره</span>
     </button>
   </div>
 </div>
@@ -1382,7 +1448,7 @@ html, body { height: 100dvh; }
 <!-- 👹 WARN Monster -->
 <div id="monster-warn">
   <div class="warn-icon">⚠️</div>
-  <div class="warn-text">الوحش قادم بعد</div>
+  <div class="warn-text">عشر ثواني بتحدد مصيرج</div>
   <div class="warn-countdown" id="warn-countdown">10</div>
   <div class="warn-text">ثواني</div>
 </div>
@@ -1405,7 +1471,7 @@ html, body { height: 100dvh; }
 <div id="message-modal">
   <div class="content">
     <div style="font-size: 60px; margin-bottom: 16px;">📜</div>
-    <h2 id="message-title" style="font-family: 'Amiri', serif; font-size: 32px; margin: 0 0 20px 0; color: #00d2ff;">رسالة سرية</h2>
+    <h2 id="message-title" style="font-family: 'Amiri', serif; font-size: 32px; margin: 0 0 20px 0; color: #00d2ff;">رساله تعحبج</h2>
     <p id="message-text" style="font-size: 16px; line-height: 1.9; color: #cbd5e1; margin-bottom: 28px;"></p>
     <button onclick="closeMessageModal()" style="padding: 14px 40px; border-radius: 50px; background: linear-gradient(90deg, #00d2ff, #0088ff); color: #000; font-weight: bold; font-size: 16px; border: none; cursor: pointer;">
       تم ✨
@@ -1418,17 +1484,17 @@ html, body { height: 100dvh; }
 <div id="message-lock-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 75; align-items: center; justify-content: center; padding: 20px;">
   <div class="glass" style="max-width: 450px; width: 100%; padding: 32px; text-align: center; border-color: rgba(0,210,255,0.5);">
     <div style="font-size: 50px; margin-bottom: 12px;">🔒</div>
-    <h2 style="font-family: 'Amiri', serif; font-size: 26px; margin: 0 0 10px 0; color: #00d2ff;">الرسالة مقفلة</h2>
+    <h2 style="font-family: 'Amiri', serif; font-size: 26px; margin: 0 0 10px 0; color: #00d2ff;">من هني تفتحين الكوكب الثاني وتطيرين له</h2>
     <p style="color: #cbd5e1; font-size: 13px; line-height: 1.7; margin-bottom: 20px;">
-      هذه الرسالة لا يمكن فتحها إلا برمز سري تحصل عليه من الميني جيم الخاص بالسكن!
+      دوري على شيء يفيدج
     </p>
-    <input id="message-secret-input" type="text" placeholder="أدخل الرمز (مثال: FARAH-5D)" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,210,255,0.5); border-radius: 10px; color: #fff; text-align: center; font-size: 14px; margin-bottom: 16px; outline: none; font-family: monospace; letter-spacing: 2px;">
+    <input id="message-secret-input" type="text" placeholder="دوري عدل الشمال الغربي مثلا" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,210,255,0.5); border-radius: 10px; color: #fff; text-align: center; font-size: 14px; margin-bottom: 16px; outline: none; font-family: monospace; letter-spacing: 2px;">
     <div style="display: flex; gap: 10px;">
       <button onclick="closeMessageLockModal()" style="flex: 1; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-weight: bold;">
-        إلغاء
+        كنسل
       </button>
       <button onclick="verifyMessageCode()" style="flex: 1; padding: 12px; border-radius: 10px; background: linear-gradient(90deg, #00d2ff, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold;">
-        فتح 🔓
+        جربي 🔓
       </button>
     </div>
   </div>
@@ -1436,17 +1502,17 @@ html, body { height: 100dvh; }
 <!-- قائمة المهمة -->
 <div id="skin-menu-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 70; align-items: center; justify-content: center; padding: 20px;">
   <div style="max-width: 500px; width: 100%; padding: 32px; text-align: center; border: 2px solid rgba(0,255,170,0.5); border-radius: 24px; background: linear-gradient(135deg, rgba(0,30,20,0.95), rgba(0,0,30,0.95));">
-    <div style="font-size: 60px; margin-bottom: 16px;">🎁</div>
-    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 16px 0; color: #00ffaa;">مهمة سرية</h2>
+    <div style="font-size: 60px; margin-bottom: 16px;"></div>
+    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 16px 0; color: #00ffaa;">حليها </h2>
     <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 24px;">
-      أكمل الميني جيم لتحصل على رمز سري!
+      
     </p>
     <div style="display: flex; gap: 10px; justify-content: center;">
       <button onclick="closeSkinMenu()" style="padding: 12px 28px; border-radius: 50px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-weight: bold;">
-        إغلاق
+        كنسل
       </button>
       <button onclick="startSkinMission()" style="padding: 12px 28px; border-radius: 50px; background: linear-gradient(90deg, #00ffaa, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold;">
-        🎮 ابدأ المهمة
+       ابدي
       </button>
     </div>
   </div>
@@ -1455,8 +1521,8 @@ html, body { height: 100dvh; }
 <!-- الميني جيم -->
 <div id="skin-minigame-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 71; align-items: center; justify-content: center; padding: 20px;">
   <div style="max-width: 600px; width: 100%; padding: 32px; text-align: center; border: 2px solid rgba(0,255,170,0.5); border-radius: 24px; background: rgba(0,10,5,0.95);">
-    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 8px 0; color: #00ffaa;">🎮 الميني جيم</h2>
-    <p id="minigame-status" style="color: #cbd5e1; margin-bottom: 16px;">انقري على المربعات المضيئة!</p>
+    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 8px 0; color: #00ffaa;">فكرتها</h2>
+    <p id="minigame-status" style="color: #cbd5e1; margin-bottom: 16px;">دوسي على المربعات</p>
     <div id="minigame-score" style="font-family: monospace; font-size: 20px; font-weight: bold; color: #00ffaa; margin-bottom: 16px;">0 / 5</div>
     <div id="minigame-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-content: center; max-width: 220px; margin: 0 auto;"></div>
   </div>
@@ -1466,12 +1532,12 @@ html, body { height: 100dvh; }
 <div id="skin-reward-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 72; align-items: center; justify-content: center; padding: 20px;">
   <div style="max-width: 500px; width: 100%; padding: 32px; text-align: center; border: 2px solid rgba(0,255,170,0.5); border-radius: 24px; background: linear-gradient(135deg, rgba(0,30,20,0.95), rgba(0,0,30,0.95));">
     <div style="font-size: 60px; margin-bottom: 16px;">🏆</div>
-    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 16px 0; color: #00ffaa;">حصلتِ على الرمز السري!</h2>
+    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 0 0 16px 0; color: #00ffaa;">عاشت</h2>
     <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 20px;">
-      احفظي هذا الرمز — راح تحتاجينه لاحقاً:
+      احفظي هذا الرمز وماخلصتي دوري على شيء ثاني
     </p>
     <div id="skin-code-display" style="font-family: monospace; font-size: 32px; font-weight: bold; color: #00ffaa; padding: 20px; background: rgba(0,0,0,0.5); border: 2px dashed rgba(0,255,170,0.5); border-radius: 12px; margin-bottom: 24px; letter-spacing: 2px;">
-      FARAH-5D
+      
     </div>
     <button onclick="closeRewardModal()" style="padding: 14px 40px; border-radius: 50px; background: linear-gradient(90deg, #00ffaa, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold; font-size: 16px;">
       تم ✨
@@ -1484,7 +1550,7 @@ html, body { height: 100dvh; }
     
     <div style="font-size: 44px; margin-bottom: 8px;">💌</div>
     <h2 style="font-family: 'Amiri', serif; font-size: 26px; margin: 0 0 16px 0; color: #FF85EB; text-shadow: 0 0 20px rgba(255,133,235,0.8);">
-      رسالة خاصة لكِ يا فرح
+      اهداء لج
     </h2>
     
     <div style="border-radius: 16px; overflow: hidden; border: 2px solid rgba(255,133,235,0.4); box-shadow: 0 0 40px rgba(255,133,235,0.3); margin-bottom: 20px;">
@@ -1506,37 +1572,100 @@ html, body { height: 100dvh; }
     </button>
   </div>
 </div>
-<!-- Tesseract Modal -->
-<div id="tesseract" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 50; align-items: center; justify-content: center; padding: 20px;">
-  <div class="glass" style="max-width: 600px; width: 100%; padding: 32px; text-align: center; border-color: rgba(157,78,221,0.5);">
-    <i class="fa-solid fa-cube" style="font-size: 48px; color: #c77dff; margin-bottom: 16px;"></i>
-    <div style="font-family: monospace; color: #c77dff; font-size: 11px; letter-spacing: 2px;">DIMENSION 5 // TESSERACT</div>
-    <h2 style="font-family: 'Amiri', serif; font-size: 28px; margin: 8px 0 16px 0;">غرفة الأبعاد الخمسة</h2>
-    <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 20px;">
-      يا فرح.. حبكِ هو القوة الوحيدة القادرة على اختراق المكان والزمان. ✨
-    </p>
-    <button onclick="document.getElementById('tesseract').style.display='none'" style="padding: 12px 32px; border-radius: 999px; background: linear-gradient(90deg, #9d4edd, #ec4899); color: #fff; font-weight: bold; cursor: pointer; border: none;">
-      إغلاق
-    </button>
-  </div>
-</div>
 
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+// ==========================================
+// 🕳️ إعدادات انتقال الثقب الأسود
+// ==========================================
+const GARGANTUA_TRANSITION = {
+  audioUrl: 'audio/blackhole.mp3',      // 🎵 ضع مسار الصوت هنا
+  redirectUrl: 'https://b4bp.github.io/18./',   // 🌐 ضع رابط موقعك هنا
+  fallbackDuration: 8,                  // ثواني احتياطية إذا ما اشتغل الصوت
+  triggered: false
+};
 
+function startRealisticBlackHole() {
+  if (GARGANTUA_TRANSITION.triggered) return;
+  GARGANTUA_TRANSITION.triggered = true;
+
+  const overlay = document.getElementById('gargantua-transition');
+  overlay.classList.add('active');
+
+  // إيقاف أصوات اللعبة
+  if (typeof stopSpaceAmbient === 'function') stopSpaceAmbient();
+  if (typeof stopAmbient === 'function') stopAmbient();
+
+  const audio = new Audio(GARGANTUA_TRANSITION.audioUrl);
+  audio.volume = 1.0;
+
+  let redirected = false;
+  const doRedirect = () => {
+    if (redirected) return;
+    redirected = true;
+    window.location.href = GARGANTUA_TRANSITION.redirectUrl; // 🌐 التحويل للموقع
+  };
+
+  // عندما ينتهي الصوت يتم النقل للرابط
+  audio.addEventListener('ended', () => setTimeout(doRedirect, 500));
+  audio.addEventListener('error', () => setTimeout(doRedirect, GARGANTUA_TRANSITION.fallbackDuration * 1000));
+  
+  audio.play().catch(err => {
+    console.warn('⚠️ تعذر تشغيل الصوت:', err);
+    setTimeout(doRedirect, GARGANTUA_TRANSITION.fallbackDuration * 1000);
+  });
+
+  // توليد النقاط الساحبة بشكل واقعي بقوة الجاذبية
+  setInterval(() => {
+    if (redirected) return;
+    const p = document.createElement('div');
+    p.className = 'bh-particle-drop';
+    
+    const size = Math.random() * 4 + 1; // حجم النقطة
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    
+    // نقطة عشوائية بعيدة في الشاشة
+    const angle = Math.random() * Math.PI * 2;
+    const radius = Math.max(window.innerWidth, window.innerHeight) * (0.6 + Math.random() * 0.4);
+    const startX = window.innerWidth / 2 + Math.cos(angle) * radius;
+    const startY = window.innerHeight / 2 + Math.sin(angle) * radius;
+    
+    p.style.left = startX + 'px';
+    p.style.top = startY + 'px';
+    overlay.appendChild(p);
+    
+    // سحب النقطة نحو مركز الشاشة بتسارع قوي
+    const duration = Math.random() * 1500 + 1000; 
+    const targetX = window.innerWidth / 2 - startX;
+    const targetY = window.innerHeight / 2 - startY;
+
+    p.animate([
+      { transform: 'translate(0px, 0px) scale(1)', opacity: 0 },
+      { opacity: 1, offset: 0.1 },
+      { transform: `translate(${targetX}px, ${targetY}px) scale(0)`, opacity: 0.8 }
+    ], {
+      duration: duration,
+      easing: 'cubic-bezier(0.8, 0, 1, 0.5)', // انحناء حركة الجاذبية الواقعي
+      fill: 'forwards'
+    });
+    
+    setTimeout(() => p.remove(), duration);
+  }, 30); // يتم توليد نقطة كل 30 جزء من الثانية
+}
 // ==========================================
 // 1. إعدادات الكواكب
 // ==========================================
 const PLANETS = [
   { id: 'miller', name: 'كوكب ميلر', color: 0x00d2ff, colorHex: '#00d2ff',
     url: 'models/miller.glb',
-    requiresCode: true, code: 'FARAH-5D', codeVerified: false,
+    requiresCode: true, code: 'فرح زروبه', codeVerified: false,
     pos: { x: -80, y: -20, z: -60 },
     dilation: 7*365*24, dilationText: '1س = 7 سنوات',
-    desc: 'كوكب المحيط. أمواج عملاقة بفعل جاذبية الثقب الأسود.',
+    desc: 'كوكب ميلر , كل خطوه منج تعني يوم',
     unlocked: true, completed: false, mission: 'wave',
     hasWorld: true,
     worldUrl: 'models/world.glb',
@@ -1556,7 +1685,7 @@ const PLANETS = [
     url: 'models/mann.glb',
     pos: { x: -120, y: 30, z: 80 },
     dilation: 1.5, dilationText: '1س = 1.5س',
-    desc: 'كوكب الجليد المتجمد.',
+    desc: 'كوكب الجليد حافظي على توازنج',
     unlocked: false, completed: false, mission: 'code',
     hasWorld: true,
     worldUrl: 'models/world2.glb',
@@ -1567,16 +1696,16 @@ const PLANETS = [
     worldFogColor: 0xd0e8f5,
     worldFogDensity: 0.025,
     worldAmbient: 0xffffff,
-    worldAmbientIntensity: 1.2,
+    worldAmbientIntensity: 0.5,
     worldSunColor: 0xffffee,
-    worldSunIntensity: 1.8,
+    worldSunIntensity: 0.8,
     iceTheme: true },
 
       { id: 'edmunds', name: 'كوكب ادموندز', color: 0x9d4edd, colorHex: '#c77dff',
     url: 'models/edmunds.glb',
     pos: { x: 100, y: 40, z: -30 },
     dilation: 1.0, dilationText: '1س = 1س',
-    desc: 'الملاذ الأخير.',
+    desc: 'الملاذ الاخير',
     unlocked: false, completed: false, mission: 'stars',
     hasWorld: true,
     worldUrl: 'models/world3.glb',
@@ -1598,7 +1727,7 @@ const PLANETS = [
     url: 'models/gargantua.glb',
     pos: { x: 150, y: -20, z: 60 },
     dilation: 100*365*24, dilationText: 'اللانهاية',
-    desc: 'الثقب الأسود الفائق.',
+    desc: 'اللانهاية',
     unlocked: false, completed: false, mission: 'tesseract',
     hasWorld: false }
 ];
@@ -1626,14 +1755,19 @@ const CHARACTER_CONFIG = {
     run:  'models/character-run.fbx',
     jump: 'models/character-jump.fbx'
   },
-  height: 1.0,   // ← الافتراضي لباقي العوالم
-  
-  // 🎯 أحجام خاصة لكل عالم
+  height: 1.0,   
   heightPerPlanet: {
-    miller: 1.0,       // عالم ميلر — طبيعي
-    mann: 1.0,         // عالم مان — طبيعي
-    edmunds: 0.5,      // 🌸 ادموندز — نص الحجم (غيّر الرقم زي ما تبغى)
+    miller: 1.0,       
+    mann: 1.0,         
+    edmunds: 0.5,      
     gargantua: 1.0
+  },
+  // 🆕 سرعات خاصة لكل عالم (المشي والجري)
+  speedPerPlanet: {
+    miller:    { walk: 3, run: 6 },  // السرعة في العالم الأول (الافتراضي)
+    mann:      { walk: 5, run: 9 },  // 🆕 السرعة في العالم الثاني (أسرع)
+    edmunds:   { walk: 3, run: 6 },  
+    gargantua: { walk: 3, run: 6 }
   }
 };
 
@@ -1656,7 +1790,7 @@ const SKIN_CONFIG = {
   interactDistance: 8,
 
   // الرمز اللي يعطيه الميني جيم
-  rewardCode: 'FARAH-5D', 
+  rewardCode: 'Я тебя люблю', 
 
   // حالة
   completed: false,
@@ -1677,9 +1811,9 @@ const VIDEO_OBJECT_CONFIG = {
 const MONSTER_CONFIG = {
   modelUrl: 'models/monster.glb',
   videoUrl: 'videos/monster.mp4',
-  scale: 1,
+  scale: 10,
   spawnDistance: 60,
-  speed: 8,
+  speed: 3,
   catchDistance: 2.5,
   warnDuration: 10,
   warnDelay: 2000,
@@ -1715,9 +1849,10 @@ const STARS_CONFIG = {
 };
 const MILLER_MESSAGE = {
   position: { x: 14.34, y: -18.46, z: -21.24 },
-  title: 'رسالة من قلب المحيط',
-  text: 'يا فرح.. كما أن أمواج هذا الكوكب لا تتوقف، كذلك حبي لكِ لا يعرف التوقف. كل موجة تحمل اسمك، وكل قطرة ماء تهمس باسمك. أنتِ ملاذي في هذا الكون الواسع. 💙'
+  title: 'تستاهلين الاحسن',
+  text: 'كل سنه وانتي لي'
 };
+
 // ==========================================
 // 🎵 إعدادات الصوت
 // ==========================================
@@ -1792,8 +1927,8 @@ let playerAction = null;
 let playerAnimationClips = {};
 let playerOnGround = true;
 let playerVelocityY = 0;
-const PLAYER_SPEED = 3;
-const PLAYER_RUN_SPEED = 6;
+let PLAYER_SPEED = 3;
+let PLAYER_RUN_SPEED = 6;
 const PLAYER_JUMP = 8;
 const GRAVITY = 20;
 
@@ -2282,21 +2417,19 @@ window.closeMessageLockModal = function () {
 };
 
 window.verifyMessageCode = function () {
-  const inputVal = document.getElementById('message-secret-input').value.trim().toUpperCase();
-  const correctCode = SKIN_CONFIG.rewardCode; // 'FARAH-5D'
+  const inputVal = document.getElementById('message-secret-input').value.trim().toLowerCase();
+  const correctCode = SKIN_CONFIG.rewardCode.trim().toLowerCase();
 
   if (inputVal === correctCode) {
     closeMessageLockModal();
-    
-    // فتح الرسالة الأصلية بعد صحة الرمز
+
     document.getElementById('message-title').textContent = MILLER_MESSAGE.title;
     document.getElementById('message-text').textContent = MILLER_MESSAGE.text;
     document.getElementById('message-modal').classList.add('show');
-    
-    // إتمام المهمة بنجاح
+
     completeMission();
   } else {
-    alert('❌ الرمز غير صحيح! أكمل ميني جيم السكن أولاً للحصول على الرمز الصحيح (FARAH-5D).');
+    alert('❌ الرمز غلط، جربي مرة ثانية');
   }
 };
 // ==========================================
@@ -2310,7 +2443,7 @@ function updateUI() {
 
   const statusEl = document.getElementById('info-status');
   if (p.unlocked && p.completed) {
-    statusEl.textContent = '✅ مكتمل';
+    statusEl.textContent = '✅ خلصتيه';
     statusEl.style.background = 'rgba(34,197,94,0.15)';
     statusEl.style.color = '#4ade80';
   } else if (p.unlocked) {
@@ -2331,28 +2464,27 @@ function updateUI() {
     
     // 🔒 إذا يحتاج رمز ولم يُدخل
     if (p.requiresCode && !p.codeVerified) {
-      html += '<button id="enter-planet-btn" onclick="openMillerCodeModal()">🔒 أدخل الرمز للدخول</button>';
+      html += '<button id="enter-planet-btn" onclick="openMillerCodeModal()">🔒 حطي الباسورد </button>';
     } else {
       // 🚀 زر دخول الكوكب
-      html += '<button id="enter-planet-btn" onclick="enterPlanetWorld()">🚀 دخول الكوكب</button>';
+      html += '<button id="enter-planet-btn" onclick="enterPlanetWorld()">🚀  ادخلي الكوكب</button>';
     }
     
     // ✅ حالة المهمة (منفصلة عن زر الدخول)
     if (p.completed) {
-      html += '<div style="text-align: center; color: #4ade80; font-weight: bold; margin-top: 8px; font-size: 11px;">✅ تم اجتياز المهمة</div>';
+      html += '<div style="text-align: center; color: #4ade80; font-weight: bold; margin-top: 8px; font-size: 11px;">✅ تمت االمعلومات</div>';
     }
     
     mb.innerHTML = html;
     
-  } else if (p.unlocked) {
+   } else if (p.unlocked) {
     // كوكب بدون عالم — مهمة فقط
+    let html = '';
+    html += '<button onclick="startMission()" style="width: 100%; padding: 8px; border-radius: 8px; background: ' + p.colorHex + '; color: #000; font-weight: bold; cursor: pointer; border: none;">' + (p.completed ? '🔄 شاهد مرة ثانية' : 'ابدأ المهمة') + '</button>';
     if (p.completed) {
-      mb.innerHTML = '<div style="text-align: center; color: #4ade80; font-weight: bold;">✅ تم اجتياز المهمة</div>';
-    } else {
-      mb.innerHTML = '<button onclick="startMission()" style="width: 100%; padding: 8px; border-radius: 8px; background: ' + p.colorHex + '; color: #000; font-weight: bold; cursor: pointer; border: none;">ابدأ المهمة</button>';
+      html += '<div style="text-align: center; color: #4ade80; font-weight: bold; margin-top: 8px; font-size: 11px;">✅ تمت المعلومات </div>';
     }
-  } else {
-    mb.innerHTML = '<div style="text-align: center; color: #64748b; font-size: 11px;">🔒 أكمل المهمة السابقة</div>';
+    mb.innerHTML = html;
   }
 
   PLANETS.forEach((pl, i) => {
@@ -2399,7 +2531,7 @@ function loadProgress() {
     if (progress.skinCompleted) SKIN_CONFIG.completed = true;
     if (progress.videoViewed) VIDEO_OBJECT_CONFIG.viewed = true;
   } catch (e) {
-    console.warn('فشل تحميل التقدم:', e);
+    console.warn('اطلعي ودشي', e);
   }
 }
 window.openMillerCodeModal = function () {
@@ -2429,7 +2561,7 @@ closeMillerCodeModal();
       enterPlanetWorld();
     }, 300);
   } else {
-    alert('❌ الرمز غير صحيح!');
+    alert('غلط ياااالل');
   }
 };
 setInterval(() => {
@@ -2587,7 +2719,7 @@ applyCameraSettings();   // 🎥 طبّق إعدادات الكاميرا
     }
         playAmbient();
 
-    showHint('🌊 وصلت إلى عالم ميلر', 3000);
+    showHint('الحمدلله على السلامه', 3000);
     
     // 👹 ابدأ الوحش — فقط في مان
     if (p.id === 'mann') {
@@ -2648,7 +2780,7 @@ resetMonsterState();   // 👹 أعد تعيين الوحش
   // 🎵 رجّع صوت الفضاء
   playSpaceAmbient();
   
-  showHint('🚀 رجعت للفضاء', 2000);
+  showHint('الحمدلله على السلامه زربه', 2000);
 };
 
 // ==========================================
@@ -2715,11 +2847,11 @@ function buildMillerWorld() {
     xhr => {
       if (xhr.total) {
         const pct = Math.round(xhr.loaded / xhr.total * 100);
-        showHint('🌍 جاري تحميل العالم... ' + pct + '%', 500);
+        showHint(' ثواني بس  ' + pct + '%', 500);
       }
     },
     err => {
-      console.warn('فشل تحميل الماب:', err);
+      console.warn('اطلعي ودشي', err);
       const groundGeo = new THREE.CircleGeometry(60, 64);
       const groundMat = new THREE.MeshStandardMaterial({ 
         color: p.iceTheme ? 0xd0e8f5 : 0xc2a878,
@@ -2843,16 +2975,16 @@ function loadSkinObject() {
       planetScene.add(skin);
       SKIN_CONFIG.object = skin;
 
-      console.log('✅ تم تحميل السكن في', SKIN_CONFIG.position);
+      console.log('ثواني بس', SKIN_CONFIG.position);
     },
     xhr => {
       if (xhr.total) {
         const pct = Math.round(xhr.loaded / xhr.total * 100);
-        showHint('🎁 جاري تحميل السكن... ' + pct + '%', 500);
+        showHint('🎁 ثواني بس ' + pct + '%', 500);
       }
     },
     err => {
-      console.warn('فشل تحميل السكن:', err);
+      console.warn('اطلعي ودشي', err);
       // بديل: صندوق بسيط في نفس الإحداثي عشان تعرف الموقع
       const placeholder = new THREE.Group();
       placeholder.position.set(
@@ -3065,8 +3197,13 @@ function updatePlayerTPS(dt) {
       Math.cos(cameraYaw + angle)
     );
 
-    const speed = isRunning ? PLAYER_RUN_SPEED : PLAYER_SPEED;
-    const moveAmt = Math.min(mag, 1) * speed * dt;
+    // 🆕 اختيار السرعة حسب الكوكب الحالي
+    const currentPlanet = PLANETS[currentIdx];
+    const planetId = currentPlanet ? currentPlanet.id : 'miller';
+    const speeds = (CHARACTER_CONFIG.speedPerPlanet && CHARACTER_CONFIG.speedPerPlanet[planetId]) 
+    || { walk: PLAYER_SPEED, run: PLAYER_RUN_SPEED };
+    
+    const speed = isRunning ? speeds.run : speeds.walk;    const moveAmt = Math.min(mag, 1) * speed * dt;
 
     playerGroup.position.x += moveDir.x * moveAmt;
     playerGroup.position.z += moveDir.z * moveAmt;
@@ -3264,7 +3401,7 @@ window.closePhotoMission = function () {
   playTone(880, 0.2, 'sine');
   setTimeout(() => playTone(1100, 0.3, 'sine'), 150);
 
-  showHint('🎉 أكملت مهمة الصورة!', 2500);
+  showHint('وهذيي كان كل شييء ', 2500);
 
   // ✅ أضف حالة الحفظ
   saveProgress();
@@ -3311,7 +3448,7 @@ function initSkinMiniGame() {
   const scoreEl = document.getElementById('minigame-score');
   const statusEl = document.getElementById('minigame-status');
   if (scoreEl) scoreEl.textContent = `0 / ${target}`;
-  if (statusEl) statusEl.textContent = 'انقري على المربعات المضيئة قبل ما تختفي!';
+  if (statusEl) statusEl.textContent = 'دوسي على المربعات';
 
   const colors = ['#00ffaa', '#00d2ff', '#9d4edd', '#ffb347'];
 
@@ -3363,7 +3500,7 @@ function initSkinMiniGame() {
   setTimeout(() => {
     clearInterval(interval);
     if (score < target) {
-      if (statusEl) statusEl.textContent = '⏰ انتهى الوقت!';
+      if (statusEl) statusEl.textContent = 'خلص';
       setTimeout(onMiniGameLose, 1500);
     }
   }, 20000);
@@ -3371,7 +3508,7 @@ function initSkinMiniGame() {
 
 function onMiniGameWin() {
   const statusEl = document.getElementById('minigame-status');
-  if (statusEl) statusEl.textContent = '🎉 نجحت!';
+  if (statusEl) statusEl.textContent = 'والنعم';
 
   setTimeout(() => {
     document.getElementById('skin-minigame-modal').style.display = 'none';
@@ -3381,7 +3518,7 @@ function onMiniGameWin() {
 
 function onMiniGameLose() {
   document.getElementById('skin-minigame-modal').style.display = 'none';
-  showHint('حاول مرة ثانية 🎮', 2000);
+  showHint('حاولي', 2000);
 }
 
 function showRewardCode() {
@@ -3724,7 +3861,7 @@ function collectStar(star, index) {
 // انتهاء مهمة النجوم
 function onStarsComplete() {
   STARS_CONFIG.completed = true;
-  showHint('🎉 أكملتِ جمع النجوم!', 3000);
+  showHint('والله عاشت واتمنى ماخفتي', 3000);
   
   // كمل مهمة الكوكب
   completeMission();
@@ -3932,7 +4069,7 @@ function spawnMonster() {
   MONSTER_CONFIG.active = true;
   MONSTER_CONFIG.spawnTime = performance.now();
   
-  showHint('👹 الوحش ظهر! اهرب!', 3000);
+  showHint('كل خطوه محسوبه عليج', 3000);
   
   playTone(80, 1, 'sawtooth');
   setTimeout(() => playTone(60, 1.5, 'sawtooth'), 300);
@@ -3984,7 +4121,7 @@ function spawnMonster() {
     xhr => {
       if (xhr.total) {
         const pct = Math.round(xhr.loaded / xhr.total * 100);
-        showHint('👹 جاري تحميل الوحش... ' + pct + '%', 500);
+        showHint(' ثواني بس' + pct + '%', 500);
       }
     },
     err => {
@@ -4067,7 +4204,7 @@ function onMonsterCatch() {
   document.body.style.background = '#330000';
   document.body.style.transition = 'background 0.5s';
   
-  showHint('💀 الوحش أمسكك!', 2000);
+  showHint('مسكج', 2000);
   
   setTimeout(() => {
     const modal = document.getElementById('monster-video-modal');
@@ -4154,7 +4291,7 @@ function loadPhotoObject() {
     xhr => {
       if (xhr.total) {
         const pct = Math.round(xhr.loaded / xhr.total * 100);
-        showHint('🖼️ جاري تحميل الأوبجكت... ' + pct + '%', 500);
+        showHint('ثواني بس ' + pct + '%', 500);
       }
     },
     err => {
@@ -4264,7 +4401,7 @@ function loadVideoObject() {
     xhr => {
       if (xhr.total) {
         const pct = Math.round(xhr.loaded / xhr.total * 100);
-        showHint('🎬 جاري تحميل الأوبجكت... ' + pct + '%', 500);
+        showHint('ثواني بس ' + pct + '%', 500);
       }
     },
     err => {
@@ -4646,8 +4783,8 @@ window.startMission = function () {
   else if (p.mission === 'code') missionCode();
   else if (p.mission === 'stars') missionStars();
   else if (p.mission === 'tesseract') {
-    document.getElementById('tesseract').style.display = 'flex';
-    completeMission();
+    startRealisticBlackHole(); // 🕳️ تشغيل الانتقالية السحرية للثقب الأسود
+  
   }
 };
 
@@ -4702,7 +4839,7 @@ function missionStars() {
   const mb = document.getElementById('mission-box');
   let count = 0;
   mb.innerHTML = `
-    <div style="text-align: center; font-size: 11px; color: #fcd34d; margin-bottom: 6px;">انقري النجوم</div>
+    <div style="text-align: center; font-size: 11px; color: #fcd34d; margin-bottom: 6px;">جمعي النجوم</div>
     <div style="display: flex; justify-content: space-around; padding: 8px 0;">
       <button onclick="starClick(this)" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,179,71,0.2); border: 1px solid #ffb347; color: #ffb347; cursor: pointer;">⭐</button>
       <button onclick="starClick(this)" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,179,71,0.2); border: 1px solid #ffb347; color: #ffb347; cursor: pointer;">⭐</button>
@@ -4730,7 +4867,7 @@ saveProgress();
 updateUI();
   setTimeout(() => {
     const next = PLANETS[currentIdx + 1];
-    alert('🎉 أحسنتِ! ' + (next ? 'تم فتح ' + next.name : 'أكملتِ المجرة'));
+    alert('🎉 عاشت! ' + (next ? 'تمت االمعلومات ' + next.name : 'خلصتي المجره'));
   }, 300);
 }
 
@@ -4796,15 +4933,15 @@ function applyCameraSettings() {
     <div style="font-size: 50px; margin-bottom: 12px;">🔒</div>
     <h2 style="font-family: 'Amiri', serif; font-size: 26px; margin: 0 0 10px 0; color: #00d2ff;">كوكب ميلر مقفل</h2>
     <p style="color: #cbd5e1; font-size: 13px; line-height: 1.7; margin-bottom: 20px;">
-      أدخل الرمز السري للدخول. الرمز تحصل عليه من ميني جيم السكن.
+      الرمز كان اول رمز لاول كوكب اذا تذكرين
     </p>
-    <input id="miller-code-input" type="text" placeholder="أدخل الرمز (مثال: FARAH-5D)" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,210,255,0.5); border-radius: 10px; color: #fff; text-align: center; font-size: 14px; margin-bottom: 16px; outline: none; font-family: monospace; letter-spacing: 2px;">
+    <input id="miller-code-input" type="text" placeholder="تذكري ممكن تلقينه بالشات" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid rgba(0,210,255,0.5); border-radius: 10px; color: #fff; text-align: center; font-size: 14px; margin-bottom: 16px; outline: none; font-family: monospace; letter-spacing: 2px;">
     <div style="display: flex; gap: 10px;">
       <button onclick="closeMillerCodeModal()" style="flex: 1; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-weight: bold;">
-        إلغاء
+        كنسل
       </button>
       <button onclick="verifyMillerCode()" style="flex: 1; padding: 12px; border-radius: 10px; background: linear-gradient(90deg, #00d2ff, #0088ff); color: #000; border: none; cursor: pointer; font-weight: bold;">
-        فتح 🔓
+        جربي 🔓
       </button>
     </div>
   </div>
@@ -4829,11 +4966,11 @@ function applyCameraSettings() {
     </button>
   </div>
 </div>
-<!-- 🕳️ شاشة انتقالية الثقب الأسود -->
-<div id="blackhole-transition">
-  <div class="bh-particles" id="bh-particles"></div>
-  <div class="bh-text">🕳️<br>أنتِ تدخلين الثقب الأسود</div>
-  <div class="bh-subtext">ENTERING GARGANTUA</div>
+<!-- 🕳️ شاشة انتقال جارجانتوا الواقعية -->
+<div id="gargantua-transition">
+  <div class="bh-accretion-disk"></div>
+  <div class="bh-event-horizon"></div>
+  <div class="bh-message">جاري العبور عبر الثقب الأسود...</div>
 </div>
 </body>
 </html>
